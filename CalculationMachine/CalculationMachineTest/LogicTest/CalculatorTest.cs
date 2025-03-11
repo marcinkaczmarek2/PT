@@ -1,6 +1,6 @@
-﻿using CalculationMachine;
+﻿using CalculationMachine.Logic;
 
-namespace CalculationMachineTest
+namespace CalculationMachineTest.LogicTest
 {
     [TestClass]
     public sealed class CalculatorTest
@@ -12,9 +12,8 @@ namespace CalculationMachineTest
 
             double a = 5d;
             double b = 13d;
-
-            double result = calculator.Add(a, b);
-
+            
+            double result = calculator.Addition(a, b);
             Assert.AreEqual(result, 18);
         }
 
@@ -56,7 +55,7 @@ namespace CalculationMachineTest
 
         [TestMethod]
 
-        public void TestSubtract() 
+        public void TestSubtract()
         {
             Calculator calculator = new Calculator();
 
