@@ -4,9 +4,9 @@ namespace CalculationMachine.Logic
 {
     public class Calculator
     {
-        public double Addition(double a, double b) 
+        public double Add(double a, double b) 
         {
-            string calculation = a + " + " + b;
+            string calculation = a + " + " + b + " = " + (a+b);
             CalculatorData.AddHistory(calculation);
             return a + b;
         }
@@ -16,19 +16,19 @@ namespace CalculationMachine.Logic
             {
                 throw new DivideByZeroException("Division by zero is forbidden");
             }
-            string calculation = a + " / " + b;
+            string calculation = a + " / " + b + " = " + (a/b);
             CalculatorData.AddHistory(calculation);
             return a / b;
         }
         public double Multiply(double a, double b)
         {
-            string calculation = a + " * " + b;
+            string calculation = a + " * " + b + " = " + (a*b);
             CalculatorData.AddHistory(calculation);
             return a * b;
         }
         public double Subtruct(double a, double b)
         {
-            string calculation = a + " - " + b;
+            string calculation = a + " - " + b + " = " +(a-b);
             CalculatorData.AddHistory(calculation);
             return a - b;
         }

@@ -7,20 +7,11 @@
         {
             calcHistory.Add(calculation);
         }
-        
+
         public static List<string> GetHistory()
         {
-            return new List<string>(calcHistory);
-            
-        }
-        public static void PrintHistory()
-        {
-            for (int i = 0; i < calcHistory.Count; i++)
-            {
-                Console.WriteLine(calcHistory[i]);
-            }
+            return calcHistory;
 
         }
-
     }
 }

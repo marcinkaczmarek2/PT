@@ -13,7 +13,7 @@ namespace CalculationMachineTest.LogicTest
             double a = 5d;
             double b = 13d;
             
-            double result = calculator.Addition(a, b);
+            double result = calculator.Add(a, b);
             Assert.AreEqual(result, 18);
         }
 
