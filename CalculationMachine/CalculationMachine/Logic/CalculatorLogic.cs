@@ -2,7 +2,7 @@
 
 namespace CalculationMachine.Logic
 {
-    public class Calculator
+    public class CalculatorLogic
     {
         public double Add(double a, double b) 
         {

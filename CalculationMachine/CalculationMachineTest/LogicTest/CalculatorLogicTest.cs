@@ -3,12 +3,12 @@
 namespace CalculationMachineTest.LogicTest
 {
     [TestClass]
-    public sealed class CalculatorTest
+    public class CalculatorLogicTest
     {
         [TestMethod]
         public void TestAdd()
         {
-            Calculator calculator = new Calculator();
+            CalculatorLogic calculator = new CalculatorLogic();
 
             double a = 5d;
             double b = 13d;
@@ -20,7 +20,7 @@ namespace CalculationMachineTest.LogicTest
         [TestMethod]
         public void TestDivide()
         {
-            Calculator calculator = new Calculator();
+            CalculatorLogic calculator = new CalculatorLogic();
 
             double a = 26d;
             double b = 13d;
@@ -33,7 +33,7 @@ namespace CalculationMachineTest.LogicTest
         [TestMethod]
         public void TestDivideByZero()
         {
-            Calculator calculator = new Calculator();
+            CalculatorLogic calculator = new CalculatorLogic();
 
             double a = 26d;
             double b = 0d;
@@ -43,7 +43,7 @@ namespace CalculationMachineTest.LogicTest
         [TestMethod]
         public void TestMultiply()
         {
-            Calculator calculator = new Calculator();
+            CalculatorLogic calculator = new CalculatorLogic();
 
             double a = 69d;
             double b = 2d;
@@ -57,7 +57,7 @@ namespace CalculationMachineTest.LogicTest
 
         public void TestSubtract()
         {
-            Calculator calculator = new Calculator();
+            CalculatorLogic calculator = new CalculatorLogic();
 
             double a = -19d;
             double b = -10d;
