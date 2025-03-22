@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Data
 {
-    class Class1
+    class Catalog
     {
     }
 }
