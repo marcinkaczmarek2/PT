@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Data.Catalog;
-using Logic.Repositories;
+﻿using Data.Catalog;
+using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
     public class LibraryService : ILibraryService
     {
-        private readonly LibraryRepository libraryRepository;
+        private readonly ILibraryRepository libraryRepository;
 
-        public LibraryService(LibraryRepository libraryRepository)
+        public LibraryService(ILibraryRepository libraryRepository)
         {
             this.libraryRepository = libraryRepository;
         }

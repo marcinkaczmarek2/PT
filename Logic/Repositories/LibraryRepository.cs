@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data;
+﻿using Data;
 using Data.Catalog;
-using Data.Events;
-using Data.Users;
+using Logic.Repositories.Interfaces;
 
 namespace Logic.Repositories
 {
-    public class LibraryRepository
+    public class LibraryRepository : ILibraryRepository
     {
         private readonly IData context;
 

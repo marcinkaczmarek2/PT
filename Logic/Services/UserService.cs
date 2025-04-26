@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using Data.Events;
 using Data.Users;
-using Logic.Repositories;
+using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserRepository userRepository;
-        private readonly EventService eventService;
+        private readonly IUserRepository userRepository;
+        private readonly IEventService eventService;
 
-        public UserService(UserRepository userRepository, EventService eventService)
+        public UserService(IUserRepository userRepository, IEventService eventService)
         {
             this.userRepository = userRepository;
             this.eventService = eventService;
@@ -78,7 +73,6 @@ namespace Logic.Services
             if (!IsValidPhoneNumber(phoneNumber))
             {
                 throw new Exception("Error, phone number can consist of only numbers.");
-
             }
             var newUser = new Reader(name, surname, email, phoneNumber, UserRole.Reader, 0.0d);
 
@@ -92,17 +86,19 @@ namespace Logic.Services
                 var newReader = CreateReader(name, surname, email, phoneNumber);
                 return AddUser(newReader);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine($"{e.Message}");
                 return false;
             }
         }
+
         private bool IsValidEmail(string email)
         {
             var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
             return Regex.IsMatch(email, emailRegex);
         }
+
         private bool IsValidPhoneNumber(string phoneNumber)
         {
             var phoneRegex = @"^\+?\d+$";
