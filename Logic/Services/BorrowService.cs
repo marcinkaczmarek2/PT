@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Data.Catalog;
-using Data.Events;
-using Data.Users;
-using Logic.Repositories;
+﻿using Data.Events;
+using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
     public class BorrowService : IBorrowService
     {
-        private readonly UserRepository userRepository;
-        private readonly LibraryRepository libraryRepository;
-        private readonly EventService eventService;
+        private readonly IUserRepository userRepository;
+        private readonly ILibraryRepository libraryRepository;
+        private readonly IEventService eventService;
 
-        public BorrowService(UserRepository userRepository, LibraryRepository libraryRepository, EventService eventService)
+        public BorrowService(IUserRepository userRepository, ILibraryRepository libraryRepository, IEventService eventService)
         {
             this.userRepository = userRepository;
             this.libraryRepository = libraryRepository;
