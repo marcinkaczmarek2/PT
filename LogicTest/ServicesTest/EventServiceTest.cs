@@ -1,70 +1,67 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Logic.Services;
 using Data.Events;
-using Logic.Repositories;
-using Moq;
-using System.Collections.Generic;
-using Data.Catalog;
-using Data.Users;
 using Data;
+using Logic.Repositories;
+using System;
+using System.Collections.Generic;
 
 namespace Services.Test
 {
     [TestClass]
     public class EventServiceTest
     {
+        private InMemoryDataContext _context;
+        private EventService _eventService;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _context = new InMemoryDataContext();
+            var repository = new EventRepository(_context);
+            _eventService = new EventService(repository);
+        }
+
         [TestMethod]
-        public void AddEvent_ShouldCallRepository()
+        public void AddEvent_ShouldAddEventCorrectly()
         {
-            var repoMock = new Mock<EventRepository>(new object[] { new TestContext() }) { CallBase = true };
+            var eventBase = new ItemAddedEvent(Guid.NewGuid(), "Sample Title");
 
-            var service = new EventService(repoMock.Object);
-            var eventBase = new TestEvent();
+            bool result = _eventService.AddEvent(eventBase);
 
-            var result = service.AddEvent(eventBase);
+            Assert.IsTrue(result, "AddEvent should return true.");
 
-            Assert.IsTrue(result);
+            List<EventBase> events = _context.GetEvents();
+            bool found = false;
+            foreach (EventBase e in events)
+            {
+                if (e.eventId == eventBase.eventId)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            Assert.IsTrue(found, "Event should be added to the context.");
         }
 
-        private class TestEvent : EventBase { }
-        private class TestContext : IData
-        {
-            public List<EventBase> GetEvents() => new List<EventBase>();
-            public void AddEvent(EventBase e) { }
-            public void AddItem(Borrowable b) { }
-            public void AddUser(User u) { }
-            public bool DeleteItem(Guid id) => true;
-            public bool DeleteUser(Guid id) => true;
-            public Borrowable? GetItem(Guid id) => null;
-            public List<Borrowable> GetItems() => new List<Borrowable>();
-            public User? GetUser(Guid id) => null;
-            public List<User> GetUsers() => new List<User>();
-        }
         [TestMethod]
         public void GetAllEvents_ShouldReturnEvents_WhenEventsExist()
         {
-            var context = new InMemoryDataContext();
-            var repository = new EventRepository(context);
-            var service = new EventService(repository);
+            var eventBase = new ItemAddedEvent(Guid.NewGuid(), "Another Title");
+            _context.AddEvent(eventBase);
 
-            var eventBase = new TestEvent();
-            context.AddEvent(eventBase);
+            List<EventBase> events = _eventService.GetAllEvents();
 
-            var result = service.GetAllEvents();
-
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(eventBase.eventId, result[0].eventId);
+            Assert.IsNotNull(events, "Returned event list should not be null.");
+            Assert.AreEqual(1, events.Count, "There should be exactly one event.");
+            Assert.AreEqual(eventBase.eventId, events[0].eventId, "Event ID should match.");
         }
 
         [TestMethod]
         [ExpectedException(typeof(Exception), "Error, no events found.")]
         public void GetAllEvents_ShouldThrowException_WhenNoEventsExist()
         {
-            var context = new InMemoryDataContext();
-            var repository = new EventRepository(context);
-            var service = new EventService(repository);
-
-            service.GetAllEvents(); // powinno rzucić wyjątek
+            _eventService.GetAllEvents();
         }
     }
 }

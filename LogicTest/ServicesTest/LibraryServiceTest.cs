@@ -3,110 +3,89 @@ using Logic.Services;
 using Data.Catalog;
 using Data;
 using Logic.Repositories;
+using System;
 
 namespace Library.LogicTest
 {
     [TestClass]
     public class LibraryServiceTests
     {
+        private InMemoryDataContext _context;
+        private LibraryService _service;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _context = new InMemoryDataContext();
+            var repository = new LibraryRepository(_context);
+            _service = new LibraryService(repository);
+        }
+
         [TestMethod]
         public void AddContent_ShouldAddNewItem()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
+            var book = new Book("Book Title", "Publisher", true, "Author Name", 200, BookGenre.Fantasy);
 
-            var item = new TestBorrowable("Book", "Publisher", true);
+            bool result = _service.AddContent(book);
 
-            var result = service.AddContent(item);
-
-            Assert.IsTrue(result);
+            Assert.IsTrue(result, "AddContent should return true.");
         }
 
         [TestMethod]
         public void RemoveContent_ShouldRemoveItem_WhenItemExists()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
+            var boardGame = new BoardGame("Game Title", "Publisher", true, 2, 6, 12, GameGenre.Strategy);
+            _context.AddItem(boardGame);
 
-            var item = new TestBorrowable("Item1", "Publisher", true);
-            context.AddItem(item);
+            bool result = _service.RemoveContent(boardGame.id);
 
-            var result = service.RemoveContent(item.id);
-
-            Assert.IsTrue(result);
+            Assert.IsTrue(result, "RemoveContent should return true when item exists.");
         }
 
         [TestMethod]
         public void RemoveContent_ShouldReturnFalse_WhenItemDoesNotExist()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
+            bool result = _service.RemoveContent(Guid.NewGuid());
 
-            var result = service.RemoveContent(Guid.NewGuid());
-
-            Assert.IsFalse(result);
+            Assert.IsFalse(result, "RemoveContent should return false when item does not exist.");
         }
 
         [TestMethod]
         public void GetContent_ShouldReturnItem_WhenItemExists()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
+            var book = new Book("Another Book", "Publisher", true, "Author", 150, BookGenre.History);
+            _context.AddItem(book);
 
-            var item = new TestBorrowable("Item1", "Publisher", true);
-            context.AddItem(item);
+            var result = _service.GetContent(book.id);
 
-            var result = service.GetContent(item.id);
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(item.id, result.id);
+            Assert.IsNotNull(result, "GetContent should not return null.");
+            Assert.AreEqual(book.id, result.id, "Returned item should have the correct ID.");
         }
 
         [TestMethod]
         [ExpectedException(typeof(Exception), "Error, no item with such id.")]
         public void GetContent_ShouldThrowException_WhenItemDoesNotExist()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
-
-            service.GetContent(Guid.NewGuid());
+            _service.GetContent(Guid.NewGuid());
         }
 
         [TestMethod]
         public void GetAllContent_ShouldReturnItems_WhenItemsExist()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
+            _context.AddItem(new Book("Book One", "Publisher", true, "Author", 100, BookGenre.Romance));
+            _context.AddItem(new BoardGame("Game One", "Publisher", true, 2, 4, 8, GameGenre.Party));
 
-            context.AddItem(new TestBorrowable("Item1", "Publisher", true));
-            context.AddItem(new TestBorrowable("Item2", "Publisher", true));
+            var items = _service.GetAllContent();
 
-            var result = service.GetAllContent();
-
-            Assert.AreEqual(2, result.Count);
+            Assert.IsNotNull(items, "Returned list should not be null.");
+            Assert.AreEqual(2, items.Count, "Should return exactly two items.");
         }
 
         [TestMethod]
         [ExpectedException(typeof(Exception), "Error, no items in stock.")]
         public void GetAllContent_ShouldThrowException_WhenNoItemsExist()
         {
-            var context = new InMemoryDataContext();
-            var repository = new LibraryRepository(context);
-            var service = new LibraryService(repository);
-
-            service.GetAllContent();
-        }
-
-        private class TestBorrowable : Borrowable
-        {
-            public TestBorrowable(string title, string publisher, bool availability)
-                : base(title, publisher, availability) { }
+            _service.GetAllContent();
         }
     }
 }

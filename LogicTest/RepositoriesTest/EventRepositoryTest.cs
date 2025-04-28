@@ -3,41 +3,47 @@ using Logic.Repositories;
 using Data.Events;
 using Data;
 using System.Collections.Generic;
+using System;
 
 namespace Repositories.Test
 {
     [TestClass]
     public class EventRepositoryTest
     {
+        private InMemoryDataContext _context;
+        private EventRepository _repo;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _context = new InMemoryDataContext();
+            _repo = new EventRepository(_context);
+        }
+
         [TestMethod]
         public void AddEvent_ShouldCallContext()
         {
-            var context = new InMemoryDataContext();
-            var repo = new EventRepository(context);
-            var eventBase = new TestEvent();
+            var itemAddedEvent = new ItemAddedEvent(Guid.NewGuid(), "Sample Title");
 
-            repo.AddEvent(eventBase);
+            _repo.AddEvent(itemAddedEvent);
 
-            Assert.AreEqual(1, context.GetEvents().Count);
-            Assert.AreEqual(eventBase.eventId, context.GetEvents()[0].eventId);
+            List<EventBase> events = _context.GetEvents();
+            Assert.AreEqual(1, events.Count, "Should have exactly one event.");
+            Assert.AreEqual(itemAddedEvent.eventId, events[0].eventId, "Event IDs should match.");
         }
 
         [TestMethod]
         public void GetAllEvents_ShouldReturnAllEvents()
         {
-            var context = new InMemoryDataContext();
-            var repo = new EventRepository(context);
+            var event1 = new ItemAddedEvent(Guid.NewGuid(), "Title1");
+            var event2 = new ItemBorrowedEvent(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now.ToString("yyyy-MM-dd"));
 
-            var event1 = new TestEvent();
-            var event2 = new TestEvent();
-            context.AddEvent(event1);
-            context.AddEvent(event2);
+            _context.AddEvent(event1);
+            _context.AddEvent(event2);
 
-            var events = repo.GetAllEvents();
+            List<EventBase> events = _repo.GetAllEvents();
 
-            Assert.AreEqual(2, events.Count);
+            Assert.AreEqual(2, events.Count, "Should return exactly two events.");
         }
-
-        private class TestEvent : EventBase { }
     }
 }

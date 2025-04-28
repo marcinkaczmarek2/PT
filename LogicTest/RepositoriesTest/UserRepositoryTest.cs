@@ -9,63 +9,64 @@ namespace Repositories.Test
     [TestClass]
     public class UserRepositoryTest
     {
+        private InMemoryDataContext _context;
+        private UserRepository _repo;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _context = new InMemoryDataContext();
+            _repo = new UserRepository(_context);
+        }
+
         [TestMethod]
         public void AddUser_ShouldAddUser()
         {
-            var context = new InMemoryDataContext();
-            var repo = new UserRepository(context);
-            var user = new TestUser("John", "Doe", "john@example.com", "123", UserRole.Reader);
+            var reader = new Reader("John", "Doe", "john@example.com", "123", UserRole.Reader, 0.0);
 
-            repo.AddUser(user);
+            _repo.AddUser(reader);
 
-            Assert.AreEqual(1, context.GetUsers().Count);
+            List<User> users = _context.GetUsers();
+            Assert.AreEqual(1, users.Count, "Should have exactly one user added.");
+            Assert.AreEqual(reader.id, users[0].id, "User IDs should match.");
         }
 
         [TestMethod]
         public void RemoveUser_ShouldRemoveUser()
         {
-            var context = new InMemoryDataContext();
-            var repo = new UserRepository(context);
-            var user = new TestUser("Jane", "Smith", "jane@example.com", "456", UserRole.Admin);
-            context.AddUser(user);
+            var employee = new Employee("Jane", "Smith", "jane@example.com", "456", UserRole.Admin, 5000.0);
+            _context.AddUser(employee);
 
-            var removed = repo.RemoveUser(user.id);
+            bool removed = _repo.RemoveUser(employee.id);
 
-            Assert.IsTrue(removed);
-            Assert.AreEqual(0, context.GetUsers().Count);
+            Assert.IsTrue(removed, "RemoveUser should return true when user is removed.");
+            Assert.AreEqual(0, _context.GetUsers().Count, "Context should be empty after removal.");
         }
 
         [TestMethod]
         public void GetUser_ShouldReturnCorrectUser()
         {
-            var context = new InMemoryDataContext();
-            var repo = new UserRepository(context);
-            var user = new TestUser("Mike", "Brown", "mike@example.com", "789", UserRole.Guest);
-            context.AddUser(user);
+            var reader = new Reader("Mike", "Brown", "mike@example.com", "789", UserRole.Reader, 0.0);
+            _context.AddUser(reader);
 
-            var retrieved = repo.GetUser(user.id);
+            var retrieved = _repo.GetUser(reader.id);
 
-            Assert.IsNotNull(retrieved);
-            Assert.AreEqual(user.id, retrieved.id);
+            Assert.IsNotNull(retrieved, "Retrieved user should not be null.");
+            Assert.AreEqual(reader.id, retrieved.id, "User IDs should match.");
         }
 
         [TestMethod]
         public void GetAllUsers_ShouldReturnAllUsers()
         {
-            var context = new InMemoryDataContext();
-            var repo = new UserRepository(context);
-            context.AddUser(new TestUser("User1", "Last1", "user1@example.com", "111", UserRole.Reader));
-            context.AddUser(new TestUser("User2", "Last2", "user2@example.com", "222", UserRole.Admin));
+            var reader = new Reader("User1", "Last1", "user1@example.com", "111", UserRole.Reader, 0.0);
+            var employee = new Employee("User2", "Last2", "user2@example.com", "222", UserRole.Admin, 6000.0);
 
-            var users = repo.GetAllUsers();
+            _context.AddUser(reader);
+            _context.AddUser(employee);
 
-            Assert.AreEqual(2, users.Count);
-        }
+            var users = _repo.GetAllUsers();
 
-        private class TestUser : User
-        {
-            public TestUser(string name, string surname, string email, string phoneNumber, UserRole role)
-                : base(name, surname, email, phoneNumber, role) { }
+            Assert.AreEqual(2, users.Count, "Should return exactly two users.");
         }
     }
 }

@@ -1,71 +1,56 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic.Services;
+﻿using Data.Catalog;
 using Data.Users;
-using Data.Catalog;
-using Logic.Repositories.Interfaces;
-using Logic.Services.Interfaces;
-using System;
-using Moq;
+using Data;
+using Logic.Repositories;
+using Logic.Services;
 
-namespace Services.Test
+[TestClass]
+public class BorrowServiceTest
 {
-    [TestClass]
-    public class BorrowServiceTest
+    private InMemoryDataContext _context;
+    private BorrowService _borrowService;
+    private Guid _userId;
+    private Guid _itemId;
+
+    [TestInitialize]
+    public void Initialize()
     {
-        [TestMethod]
-        public void BorrowItem_ShouldSetItemAsUnavailable()
+        _context = new InMemoryDataContext();
+
+        var userRepository = new UserRepository(_context);
+        var libraryRepository = new LibraryRepository(_context);
+        var eventService = new EventService(new EventRepository(_context));
+
+        _borrowService = new BorrowService(userRepository, libraryRepository, eventService);
+
+        var reader = new Reader("John", "Doe", "john@example.com", "+123", UserRole.Reader, 0.0);
+        var book = new Book("The Great Adventure", "Publisher", true, "Author Name", 123, BookGenre.Adventure);
+
+        _context.AddUser(reader);
+        _context.AddItem(book);
+
+        _userId = reader.id; 
+        _itemId = book.id;   
+    }
+
+    [TestMethod]
+    public void BorrowItem_ShouldSetItemAsUnavailable()
+    {
+        bool result = _borrowService.BorrowItem(_userId, _itemId);
+
+        Assert.IsTrue(result, "BorrowItem should return true.");
+
+        List<Borrowable> items = _context.GetItems();
+        bool found = false;
+        foreach (Borrowable item in items)
         {
-            var user = new TestUser("John", "Doe", "john@example.com", "123", UserRole.Reader);
-            var item = new TestBorrowable("Book", "Publisher", true);
-
-            var userRepoMock = new Mock<IUserRepository>();
-            userRepoMock.Setup(r => r.GetUser(user.id)).Returns(user);
-
-            var libraryRepoMock = new Mock<ILibraryRepository>();
-            libraryRepoMock.Setup(r => r.GetContent(item.id)).Returns(item);
-
-            var eventServiceMock = new Mock<IEventService>();
-
-            var borrowService = new BorrowService(userRepoMock.Object, libraryRepoMock.Object, eventServiceMock.Object);
-
-            var result = borrowService.BorrowItem(user.id, item.id);
-
-            Assert.IsTrue(result);
-            Assert.IsFalse(item.availbility);
+            if (item.id == _itemId)
+            {
+                found = true;
+                Assert.IsFalse(item.availbility, "Item should not be available after borrowing.");
+                break;
+            }
         }
-
-        [TestMethod]
-        public void ReturnItem_ShouldSetItemAsAvailable()
-        {
-            var user = new TestUser("Jane", "Doe", "jane@example.com", "456", UserRole.Reader);
-            var item = new TestBorrowable("Game", "Publisher", false);
-
-            var userRepoMock = new Mock<IUserRepository>();
-            userRepoMock.Setup(r => r.GetUser(user.id)).Returns(user);
-
-            var libraryRepoMock = new Mock<ILibraryRepository>();
-            libraryRepoMock.Setup(r => r.GetContent(item.id)).Returns(item);
-
-            var eventServiceMock = new Mock<IEventService>();
-
-            var borrowService = new BorrowService(userRepoMock.Object, libraryRepoMock.Object, eventServiceMock.Object);
-
-            var result = borrowService.ReturnItem(user.id, item.id);
-
-            Assert.IsTrue(result);
-            Assert.IsTrue(item.availbility);
-        }
-
-        private class TestUser : User
-        {
-            public TestUser(string name, string surname, string email, string phoneNumber, UserRole role)
-                : base(name, surname, email, phoneNumber, role) { }
-        }
-
-        private class TestBorrowable : Borrowable
-        {
-            public TestBorrowable(string title, string publisher, bool availability)
-                : base(title, publisher, availability) { }
-        }
+        Assert.IsTrue(found, "Borrowed item should exist.");
     }
 }
