@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Data.Catalog;
 
-namespace Library.Tests
+namespace Catalog.Tests
 {
     [TestClass]
-    public class BorrowableTests
+    public class BorrowableTest
     {
         [TestMethod]
-        public void Borrowable_Constructor_SetsPropertiesCorrectly()
+        public void BorrowableConstructorTest()
         {
             string title = "Sample Title";
             string publisher = "Sample Publisher";

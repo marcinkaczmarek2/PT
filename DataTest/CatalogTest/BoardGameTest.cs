@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Data.Catalog;
 
-namespace Library.Tests
+namespace Catalog.Tests
 {
     [TestClass]
-    public class BoardGameTests
+    public class BoardGameTest
     {
         [TestMethod]
-        public void BoardGame_Constructor_SetsPropertiesCorrectly()
+        public void BoardGameConstructorTest()
         {
             string title = "Catan";
             string publisher = "Kosmos";

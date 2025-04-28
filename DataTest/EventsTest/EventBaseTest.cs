@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Data.Events;
 
-namespace DataTest.EventsTest
+namespace Events.Tests
 {
-    class EventBaseTest
+    [TestClass]
+    public class EventBaseTest
     {
+        [TestMethod]
+        public void EventBaseTests()
+        {
+            var eventBase = new TestEvent();
+            Assert.AreNotEqual(Guid.Empty, eventBase.eventId);
+            Assert.IsTrue((DateTime.UtcNow - eventBase.timestamp).TotalSeconds < 5);
+        }
+
+        private class TestEvent : EventBase { }
     }
 }

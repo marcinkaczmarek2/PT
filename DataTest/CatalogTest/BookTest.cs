@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Data.Catalog;
 
-namespace Library.Tests
+namespace Catalog.Tests
 {
     [TestClass]
-    public class BookTests
+    public class BookTest
     {
         [TestMethod]
-        public void Book_Constructor_SetsPropertiesCorrectly()
+        public void BookConstructorTest()
         {
             string title = "The Hobbit";
             string publisher = "George Allen & Unwin";
