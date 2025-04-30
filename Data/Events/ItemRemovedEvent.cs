@@ -1,12 +1,12 @@
 ﻿
 namespace Data.Events
 {
-    public class ItemRemovedEvent : EventBase
+    internal class ItemRemovedEvent : EventBase
     {
-        public Guid itemId { get; set; }
-        public string? itemTitle { get; set; }
+        internal Guid itemId { get; private set; }
+        internal string? itemTitle { get; private set; }
 
-        public ItemRemovedEvent(Guid itemId, string itemTitle)
+        internal ItemRemovedEvent(Guid itemId, string itemTitle)
             : base()
         {
             this.itemId = itemId;

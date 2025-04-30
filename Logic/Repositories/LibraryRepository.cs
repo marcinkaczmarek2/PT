@@ -1,10 +1,10 @@
-﻿using Data;
+﻿using Data.API;
 using Data.Catalog;
 using Logic.Repositories.Interfaces;
 
 namespace Logic.Repositories
 {
-    public class LibraryRepository : ILibraryRepository
+    internal class LibraryRepository : ILibraryRepository
     {
         private readonly IData context;
 

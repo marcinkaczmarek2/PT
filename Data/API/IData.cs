@@ -2,7 +2,7 @@
 using Data.Events;
 using Data.Users;
 
-namespace Data
+namespace Data.API
 {
     public interface IData
     {

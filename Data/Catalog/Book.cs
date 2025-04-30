@@ -1,12 +1,12 @@
 ﻿
 namespace Data.Catalog
 {
-    public class Book : Borrowable
+    internal class Book : Borrowable
     {
-        public string author { set; get; }
-        public int numberOfPages { set; get; }
-        public BookGenre genre { set; get; }
-        public Book(string title, string publisher, bool availbility, string author, int numberOfPages, BookGenre genre) 
+        internal string author { private set; get; }
+        internal int numberOfPages { private set; get; }
+        internal BookGenre genre { private set; get; }
+        internal Book(string title, string publisher, bool availbility, string author, int numberOfPages, BookGenre genre) 
             : base(title, publisher, availbility)
         {
             this.author = author;
@@ -15,7 +15,7 @@ namespace Data.Catalog
         }
     }
     
-    public enum BookGenre
+    internal enum BookGenre
     {
         Fantasy,
         ScienceFiction,

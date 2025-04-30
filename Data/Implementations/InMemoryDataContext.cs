@@ -1,10 +1,11 @@
-﻿using Data.Catalog;
+﻿using Data.API;
+using Data.Catalog;
 using Data.Events;
 using Data.Users;
 
-namespace Data
+namespace Data.Implementations
 {
-    public class InMemoryDataContext : IData
+    internal sealed class InMemoryDataContext : IData
     {
         
         private Dictionary<Guid, User> users = new();

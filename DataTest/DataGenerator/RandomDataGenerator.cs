@@ -1,16 +1,15 @@
-﻿using Data;
+﻿using Data.API;
+using Data.Implementations;
 using Data.Catalog;
 using Data.Events;
 using Data.Users;
-using System;
-using System.Collections.Generic;
 
 namespace DataTest.TestDataGeneration
 {
 
     public interface IDataGenerator
     {
-        InMemoryDataContext GetDataContext();
+        IData GetDataContext();
     }
     internal class RandomDataGenerator : IDataGenerator
     {
@@ -27,7 +26,7 @@ namespace DataTest.TestDataGeneration
             GenerateEvents();
         }
 
-        public InMemoryDataContext GetDataContext()
+        public IData GetDataContext()
         {
             return _context;
         }

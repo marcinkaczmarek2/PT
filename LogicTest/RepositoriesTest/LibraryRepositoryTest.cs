@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic.Repositories;
+﻿using Logic.Repositories;
 using Data.Catalog;
-using Data;
-using System.Collections.Generic;
+using Data.Implementations;
 
 namespace Repositories.Test
 {

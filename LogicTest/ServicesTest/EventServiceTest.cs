@@ -1,10 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic.Services;
+﻿using Logic.Services;
 using Data.Events;
-using Data;
+using Data.Implementations;
 using Logic.Repositories;
-using System;
-using System.Collections.Generic;
 
 namespace Services.Test
 {

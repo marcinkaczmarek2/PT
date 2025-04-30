@@ -1,14 +1,14 @@
 ﻿
 namespace Data.Events
 {
-    public class ItemReturnedEvent : EventBase
+    internal class ItemReturnedEvent : EventBase
     {
-        public Guid userId { get; set; }
-        public Guid itemId { get; set; }
+        internal Guid userId { get; private set; }
+        internal Guid itemId { get; private set; }
 
-        public string itemTitle { get; set; }
+        internal string itemTitle { get; private set; }
 
-        public ItemReturnedEvent(Guid userId, Guid itemId, string itemTitle)
+        internal ItemReturnedEvent(Guid userId, Guid itemId, string itemTitle)
             : base()
         {
             this.userId = userId;

@@ -6,12 +6,12 @@ using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
-    public class UserService : IUserService
+    internal sealed class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
         private readonly IEventService eventService;
 
-        public UserService(IUserRepository userRepository, IEventService eventService)
+        internal UserService(IUserRepository userRepository, IEventService eventService)
         {
             this.userRepository = userRepository;
             this.eventService = eventService;
@@ -21,7 +21,7 @@ namespace Logic.Services
         {
             if (userRepository.GetUser(user.id) != null)
             {
-                throw new Exception("Error, cannot add another user with the same id.");
+                throw new InvalidOperationException("Error, cannot add another user with the same id.");
             }
             userRepository.AddUser(user);
             eventService.AddEvent(new UserAddedEvent(user.id, user.email));
@@ -44,7 +44,7 @@ namespace Logic.Services
             var receivedUser = userRepository.GetUser(id);
             if (receivedUser == null)
             {
-                throw new Exception("Error, no user with such id.");
+                throw new InvalidOperationException("Error, no user with such id.");
             }
             return receivedUser;
         }
@@ -54,25 +54,25 @@ namespace Logic.Services
             var receivedList = userRepository.GetAllUsers();
             if (receivedList.Count == 0)
             {
-                throw new Exception("Error, no users found.");
+                throw new InvalidOperationException("Error, no users found.");
             }
             return receivedList;
         }
 
-        public Reader CreateReader(string name, string surname, string email, string phoneNumber)
+        public User CreateReader(string name, string surname, string email, string phoneNumber)
         {
             var existingUser = userRepository.GetAllUsers().FirstOrDefault(u => u.email == email);
             if (existingUser != null)
             {
-                throw new Exception("Error, User already exists with this email.");
+                throw new InvalidOperationException("Error, User already exists with this email.");
             }
             if (!IsValidEmail(email))
             {
-                throw new Exception("Error, email must have '@' and '.' signs in it.");
+                throw new InvalidOperationException("Error, email must have '@' and '.' signs in it.");
             }
             if (!IsValidPhoneNumber(phoneNumber))
             {
-                throw new Exception("Error, phone number can consist of only numbers.");
+                throw new InvalidOperationException("Error, phone number can consist of only numbers.");
             }
             var newUser = new Reader(name, surname, email, phoneNumber, UserRole.Reader, 0.0d);
 
@@ -86,7 +86,7 @@ namespace Logic.Services
                 var newReader = CreateReader(name, surname, email, phoneNumber);
                 return AddUser(newReader);
             }
-            catch (Exception e)
+            catch (InvalidOperationException e)
             {
                 Console.WriteLine($"{e.Message}");
                 return false;

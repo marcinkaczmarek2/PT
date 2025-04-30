@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Data.Users;
-using System;
+﻿using Data.Users;
 
 namespace Users.Tests
 {

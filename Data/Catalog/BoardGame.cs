@@ -1,14 +1,14 @@
 ﻿
 namespace Data.Catalog
 {
-    public class BoardGame : Borrowable
+    internal sealed class BoardGame : Borrowable
     {
-        public int minimumNumberOfPlayers { set; get; }
-        public int maximumNumberOfPlayers { set; get; }
-        public int recommendedAge { set; get; }
-        public GameGenre genre { set; get; }
+        internal int minimumNumberOfPlayers { private set; get; }
+        internal int maximumNumberOfPlayers { private set; get; }
+        internal int recommendedAge { private set; get; }
+        internal GameGenre genre { private set; get; }
 
-        public BoardGame(string title, string publisher, bool availbility, int minimumNumberOfPlayers
+        internal BoardGame(string title, string publisher, bool availbility, int minimumNumberOfPlayers
             ,int maximumNumberOfPlayers, int recommendedAge, GameGenre genre)
             : base(title, publisher, availbility)
         {
@@ -19,7 +19,7 @@ namespace Data.Catalog
         }
     }
 
-    public enum GameGenre
+    internal enum GameGenre
     {
         Strategy,
         Party,

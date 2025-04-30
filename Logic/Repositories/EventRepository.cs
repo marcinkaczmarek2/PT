@@ -1,10 +1,10 @@
 ﻿using Data.Events;
-using Data;
 using Logic.Repositories.Interfaces;
+using Data.API;
 
 namespace Logic.Repositories
 {
-    public class EventRepository : IEventRepository
+    internal class EventRepository : IEventRepository
     {
         private readonly IData context;
 

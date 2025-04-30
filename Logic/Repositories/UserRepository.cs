@@ -1,9 +1,9 @@
 ﻿using Data.Users;
-using Data;
 using Logic.Repositories.Interfaces;
+using Data.API;
 namespace Logic.Repositories
 {
-    public class UserRepository : IUserRepository
+    internal class UserRepository : IUserRepository
     {
         private readonly IData context;
 

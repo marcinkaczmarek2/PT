@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Data.Catalog;
+﻿using Data.Catalog;
 
 namespace Catalog.Tests
 {

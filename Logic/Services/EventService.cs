@@ -4,11 +4,11 @@ using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
-    public class EventService : IEventService
+    internal sealed class EventService : IEventService
     {
         private readonly EventRepository eventRepository;
 
-        public EventService(EventRepository eventRepository)
+        internal EventService(EventRepository eventRepository)
         {
             this.eventRepository = eventRepository;
         }
@@ -17,7 +17,7 @@ namespace Logic.Services
         {
             if (eventBase == null)
             {
-                throw new Exception("Error, event cannot be null.");
+                throw new InvalidOperationException("Error, event cannot be null.");
             }
 
             eventRepository.AddEvent(eventBase);
@@ -29,7 +29,7 @@ namespace Logic.Services
             var receivedList = eventRepository.GetAllEvents();
             if (receivedList.Count == 0)
             {
-                throw new Exception("Error, no events found.");
+                throw new InvalidOperationException("Error, no events found.");
             }
             return receivedList;
         }

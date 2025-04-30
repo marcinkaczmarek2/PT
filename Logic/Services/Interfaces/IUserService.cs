@@ -8,7 +8,7 @@ namespace Logic.Services.Interfaces
         bool RemoveUser(Guid id);
         User GetUser(Guid id);
         List<User> GetAllUsers();
-        Reader CreateReader(string name, string surname, string email, string phoneNumber);
+        User CreateReader(string name, string surname, string email, string phoneNumber);
         bool RegisterReader(string name, string surname, string email, string phoneNumber);
     }
 

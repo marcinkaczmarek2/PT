@@ -1,18 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Data;
+﻿using Data.API;
 using Data.Catalog;
 using Data.Users;
 using Data.Events;
 using DataTest.TestDataGeneration;
-using System;
-using System.Collections.Generic;
 
 namespace DataTest
 {
     [TestClass]
     public class RandomDataTests
     {
-        private InMemoryDataContext _context;
+        private IData _context;
 
         [TestInitialize]
         public void Initialize()

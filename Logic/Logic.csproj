@@ -9,5 +9,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="LogicTest" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="DataTest" />
+	</ItemGroup>
 
 </Project>

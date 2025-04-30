@@ -5,5 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Logic" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="LogicTest" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="DataTest" />
+	</ItemGroup>
 
 </Project>

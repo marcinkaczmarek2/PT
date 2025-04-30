@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Data.Events;
+﻿using Data.Events;
 
 namespace Events.Tests
 {

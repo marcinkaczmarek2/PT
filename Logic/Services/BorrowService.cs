@@ -4,13 +4,13 @@ using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
-    public class BorrowService : IBorrowService
+    internal sealed class BorrowService : IBorrowService
     {
         private readonly IUserRepository userRepository;
         private readonly ILibraryRepository libraryRepository;
         private readonly IEventService eventService;
 
-        public BorrowService(IUserRepository userRepository, ILibraryRepository libraryRepository, IEventService eventService)
+        internal BorrowService(IUserRepository userRepository, ILibraryRepository libraryRepository, IEventService eventService)
         {
             this.userRepository = userRepository;
             this.libraryRepository = libraryRepository;
@@ -22,18 +22,18 @@ namespace Logic.Services
             var user = userRepository.GetUser(userId);
             if (user == null)
             {
-                throw new Exception("Error, user does not exist.");
+                throw new InvalidOperationException("Error, user does not exist.");
             }
 
             var item = libraryRepository.GetContent(itemId);
             if (item == null)
             {
-                throw new Exception("Error, item does not exist.");
+                throw new InvalidOperationException("Error, item does not exist.");
             }
 
             if (!item.availbility)
             {
-                throw new Exception("Error, item is already borrowed.");
+                throw new InvalidOperationException("Error, item is already borrowed.");
             }
 
             item.availbility = false;
@@ -46,18 +46,18 @@ namespace Logic.Services
             var user = userRepository.GetUser(userId);
             if (user == null)
             {
-                throw new Exception("Error, user does not exist.");
+                throw new InvalidOperationException("Error, user does not exist.");
             }
 
             var item = libraryRepository.GetContent(itemId);
             if (item == null)
             {
-                throw new Exception("Error, item does not exist.");
+                throw new InvalidOperationException("Error, item does not exist.");
             }
 
             if (item.availbility)
             {
-                throw new Exception("Error, item is not currently borrowed.");
+                throw new InvalidOperationException("Error, item is not currently borrowed.");
             }
 
             item.availbility = true;

@@ -1,10 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Data;
+﻿using Data.Implementations;
 using Data.Users;
 using Data.Catalog;
 using Data.Events;
-using System;
-using System.Linq;
 
 namespace Memory.Tests
 {
