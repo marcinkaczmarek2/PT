@@ -1,4 +1,5 @@
 ﻿using Data.API;
+using Data.API.Models;
 using Data.Catalog;
 using Data.Users;
 using Data.Events;
@@ -21,7 +22,7 @@ namespace DataTest
         [TestMethod]
         public void ShouldGenerateBooksAndBoardGames()
         {
-            List<Borrowable> items = _context.GetItems();
+            List<IBorrowable> items = _context.GetItems();
             Assert.IsTrue(items.Count > 0, "No items generated.");
 
             bool hasBook = false;
@@ -46,7 +47,7 @@ namespace DataTest
         [TestMethod]
         public void ShouldGenerateReadersAndEmployees()
         {
-            List<User> users = _context.GetUsers();
+            List<IUser> users = _context.GetUsers();
             Assert.IsTrue(users.Count > 0, "No users generated.");
 
             bool hasReader = false;
@@ -71,7 +72,7 @@ namespace DataTest
         [TestMethod]
         public void ShouldGenerateBorrowAndReturnEvents()
         {
-            List<EventBase> events = _context.GetEvents();
+            List<IEvent> events = _context.GetEvents();
             Assert.IsTrue(events.Count > 0, "No events generated.");
 
             bool hasBorrowEvent = false;
@@ -96,9 +97,9 @@ namespace DataTest
         [TestMethod]
         public void BorrowedEvents_ShouldHaveValidUsersAndItems()
         {
-            List<EventBase> events = _context.GetEvents();
-            List<User> users = _context.GetUsers();
-            List<Borrowable> items = _context.GetItems();
+            List<IEvent> events = _context.GetEvents();
+            List<IUser> users = _context.GetUsers();
+            List<IBorrowable> items = _context.GetItems();
 
             foreach (EventBase e in events)
             {
@@ -134,9 +135,9 @@ namespace DataTest
         [TestMethod]
         public void ReturnedEvents_ShouldHaveValidUsersAndItems()
         {
-            List<EventBase> events = _context.GetEvents();
-            List<User> users = _context.GetUsers();
-            List<Borrowable> items = _context.GetItems();
+            List<IEvent> events = _context.GetEvents();
+            List<IUser> users = _context.GetUsers();
+            List<IBorrowable> items = _context.GetItems();
 
             foreach (EventBase e in events)
             {

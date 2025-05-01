@@ -1,4 +1,4 @@
-﻿using Data.Catalog;
+﻿using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
@@ -7,19 +7,24 @@ namespace Logic.Services
     internal sealed class LibraryService : ILibraryService
     {
         private readonly ILibraryRepository libraryRepository;
+        private readonly IEventService eventService;
+        private readonly IEventFactory eventFactory;
 
-        internal LibraryService(ILibraryRepository libraryRepository)
+        internal LibraryService(ILibraryRepository libraryRepository, IEventService eventService, IEventFactory eventFactory)
         {
             this.libraryRepository = libraryRepository;
+            this.eventService = eventService;
+            this.eventFactory = eventFactory;
         }
 
-        public bool AddContent(Borrowable content)
+        public bool AddContent(IBorrowable content)
         {
             if (libraryRepository.GetContent(content.id) != null)
             {
                 throw new InvalidOperationException("Error, cannot add another item with the same id.");
             }
             libraryRepository.AddContent(content);
+            eventService.AddEvent(eventFactory.CreateItemAddedEvent(content.id, content.title));
             return true;
         }
 
@@ -30,10 +35,11 @@ namespace Logic.Services
             {
                 return false;
             }
+            eventService.AddEvent(eventFactory.CreateItemRemovedEvent(existingContent.id, existingContent.title));
             return libraryRepository.RemoveContent(id);
         }
 
-        public Borrowable? GetContent(Guid id)
+        public IBorrowable? GetContent(Guid id)
         {
             var receivedContent = libraryRepository.GetContent(id);
             if (receivedContent == null)
@@ -43,7 +49,7 @@ namespace Logic.Services
             return receivedContent;
         }
 
-        public List<Borrowable> GetAllContent()
+        public List<IBorrowable> GetAllContent()
         {
             var receivedList = libraryRepository.GetAllContent();
             if (receivedList.Count == 0)

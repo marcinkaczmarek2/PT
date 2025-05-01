@@ -1,6 +1,9 @@
-﻿namespace Data.Users
+﻿using Data.API.Models;
+using Data.Enums;
+
+namespace Data.Users
 {
-    public abstract class User
+    internal abstract class User : IUser
     {
         public Guid id { get; private set; }
         public string name { get; set; }
@@ -9,7 +12,7 @@
         public string phoneNumber { get; set; }
         public UserRole role { get; set; }
 
-        public User(string name, string surname, string email, string phoneNumber, UserRole role)
+        internal User(string name, string surname, string email, string phoneNumber, UserRole role)
         {
             id = Guid.NewGuid();
             this.name = name;
@@ -20,10 +23,4 @@
         }
     }
 
-    public enum UserRole
-    {
-        Admin,
-        Reader,
-        Guest
-    }
 }

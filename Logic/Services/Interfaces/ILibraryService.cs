@@ -1,13 +1,13 @@
-﻿using Data.Catalog;
+﻿using Data.API.Models;
 
 namespace Logic.Services.Interfaces
 {
     public interface ILibraryService
     {
-        bool AddContent(Borrowable content);
+        bool AddContent(IBorrowable content);
         bool RemoveContent(Guid id);
-        Borrowable? GetContent(Guid id);
-        List<Borrowable> GetAllContent();
+        IBorrowable? GetContent(Guid id);
+        List<IBorrowable> GetAllContent();
     }
 
 }

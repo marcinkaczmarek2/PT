@@ -1,14 +1,14 @@
-﻿using Data.Users;
+﻿using Data.API.Models;
 
 namespace Logic.Services.Interfaces
 {
     public interface IUserService
     {
-        bool AddUser(User user);
+        bool AddUser(IUser user);
         bool RemoveUser(Guid id);
-        User GetUser(Guid id);
-        List<User> GetAllUsers();
-        User CreateReader(string name, string surname, string email, string phoneNumber);
+        IUser GetUser(Guid id);
+        List<IUser> GetAllUsers();
+        IUser CreateReader(string name, string surname, string email, string phoneNumber);
         bool RegisterReader(string name, string surname, string email, string phoneNumber);
     }
 

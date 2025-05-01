@@ -1,12 +1,12 @@
-﻿using Data.Users;
+﻿using Data.API.Models;
 
 namespace Logic.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        void AddUser(User user);
+        void AddUser(IUser user);
         bool RemoveUser(Guid id);
-        User? GetUser(Guid id);
-        List<User> GetAllUsers();
+        IUser? GetUser(Guid id);
+        List<IUser> GetAllUsers();
     }
 }

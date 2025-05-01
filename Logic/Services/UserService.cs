@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using Data.Events;
-using Data.Users;
+using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
@@ -10,21 +9,25 @@ namespace Logic.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IEventService eventService;
+        private readonly IEventFactory eventFactory;
+        private readonly IUserFactory userFactory;
 
-        internal UserService(IUserRepository userRepository, IEventService eventService)
+        internal UserService(IUserRepository userRepository, IEventService eventService, IEventFactory eventFactory, IUserFactory userFactory)
         {
             this.userRepository = userRepository;
             this.eventService = eventService;
+            this.eventFactory = eventFactory;
+            this.userFactory = userFactory;
         }
 
-        public bool AddUser(User user)
+        public bool AddUser(IUser user)
         {
             if (userRepository.GetUser(user.id) != null)
             {
                 throw new InvalidOperationException("Error, cannot add another user with the same id.");
             }
             userRepository.AddUser(user);
-            eventService.AddEvent(new UserAddedEvent(user.id, user.email));
+            eventService.AddEvent(eventFactory.CreateUserAddedEvent(user.id, user.email));
             return true;
         }
 
@@ -35,11 +38,11 @@ namespace Logic.Services
             {
                 return false;
             }
-            eventService.AddEvent(new UserRemovedEvent(existingUser.id, existingUser.email));
+            eventService.AddEvent(eventFactory.CreateUserRemovedEvent(existingUser.id, existingUser.email));
             return userRepository.RemoveUser(id);
         }
 
-        public User GetUser(Guid id)
+        public IUser GetUser(Guid id)
         {
             var receivedUser = userRepository.GetUser(id);
             if (receivedUser == null)
@@ -49,7 +52,7 @@ namespace Logic.Services
             return receivedUser;
         }
 
-        public List<User> GetAllUsers()
+        public List<IUser> GetAllUsers()
         {
             var receivedList = userRepository.GetAllUsers();
             if (receivedList.Count == 0)
@@ -59,7 +62,7 @@ namespace Logic.Services
             return receivedList;
         }
 
-        public User CreateReader(string name, string surname, string email, string phoneNumber)
+        public IUser CreateReader(string name, string surname, string email, string phoneNumber)
         {
             var existingUser = userRepository.GetAllUsers().FirstOrDefault(u => u.email == email);
             if (existingUser != null)
@@ -74,7 +77,7 @@ namespace Logic.Services
             {
                 throw new InvalidOperationException("Error, phone number can consist of only numbers.");
             }
-            var newUser = new Reader(name, surname, email, phoneNumber, UserRole.Reader, 0.0d);
+            var newUser = userFactory.CreateReader(name, surname, email, phoneNumber);
 
             return newUser;
         }

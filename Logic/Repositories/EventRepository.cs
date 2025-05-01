@@ -1,5 +1,5 @@
-﻿using Data.Events;
-using Logic.Repositories.Interfaces;
+﻿using Logic.Repositories.Interfaces;
+using Data.API.Models;
 using Data.API;
 
 namespace Logic.Repositories
@@ -13,12 +13,12 @@ namespace Logic.Repositories
             this.context = context;
         }
 
-        public void AddEvent(EventBase eventBase)
+        public void AddEvent(IEvent eventBase)
         {
             context.AddEvent(eventBase);
         }
 
-        public List<EventBase> GetAllEvents()
+        public List<IEvent> GetAllEvents()
         {
             return context.GetEvents();
         }

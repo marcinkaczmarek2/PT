@@ -1,6 +1,6 @@
-﻿using Data.Users;
-using Logic.Repositories.Interfaces;
+﻿using Logic.Repositories.Interfaces;
 using Data.API;
+using Data.API.Models;
 namespace Logic.Repositories
 {
     internal class UserRepository : IUserRepository
@@ -12,7 +12,7 @@ namespace Logic.Repositories
             this.context = context;
         }
 
-        public void AddUser(User user)
+        public void AddUser(IUser user)
         {
             context.AddUser(user);
         }
@@ -22,12 +22,12 @@ namespace Logic.Repositories
             return context.DeleteUser(id);
         }
 
-        public User? GetUser(Guid id)
+        public IUser? GetUser(Guid id)
         {
             return context.GetUser(id);
         }
 
-        public List<User> GetAllUsers()
+        public List<IUser> GetAllUsers()
         {
             return context.GetUsers();
         }

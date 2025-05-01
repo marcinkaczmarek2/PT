@@ -1,8 +1,10 @@
 ﻿using Data.API;
+using Data.API.Models;
 using Data.Implementations;
 using Data.Catalog;
 using Data.Events;
 using Data.Users;
+using Data.Enums;
 
 namespace DataTest.TestDataGeneration
 {
@@ -105,8 +107,8 @@ namespace DataTest.TestDataGeneration
 
         private void GenerateEvents()
         {
-            List<User> users = _context.GetUsers();
-            List<Borrowable> items = _context.GetItems();
+            List<IUser> users = _context.GetUsers();
+            List<IBorrowable> items = _context.GetItems();
 
             for (int i = 0; i < 10; i++)
             {

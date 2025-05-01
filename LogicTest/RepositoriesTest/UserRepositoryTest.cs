@@ -1,6 +1,8 @@
 ﻿using Logic.Repositories;
 using Data.Users;
+using Data.Enums;
 using Data.Implementations;
+using Data.API.Models;
 
 namespace Repositories.Test
 {
@@ -24,7 +26,7 @@ namespace Repositories.Test
 
             _repo.AddUser(reader);
 
-            List<User> users = _context.GetUsers();
+            List<IUser> users = _context.GetUsers();
             Assert.AreEqual(1, users.Count, "Should have exactly one user added.");
             Assert.AreEqual(reader.id, users[0].id, "User IDs should match.");
         }

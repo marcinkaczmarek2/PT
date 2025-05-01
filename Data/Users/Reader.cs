@@ -1,4 +1,5 @@
-﻿
+﻿using Data.Enums;
+
 namespace Data.Users
 {
     internal class Reader : User

@@ -1,10 +1,10 @@
-﻿using Data.Events;
+﻿using Data.API.Models;
 
 namespace Logic.Repositories.Interfaces
 {
     public interface IEventRepository
     {
-        void AddEvent(EventBase eventBase);
-        List<EventBase> GetAllEvents();
+        void AddEvent(IEvent eventBase);
+        List<IEvent> GetAllEvents();
     }
 }

@@ -1,12 +1,13 @@
-﻿
+﻿using Data.API.Models;
+
 namespace Data.Events
 {
-    public abstract class EventBase
+    internal abstract class EventBase : IEvent
     {
         public DateTime timestamp { get; set; }
         public Guid eventId { get; private set; }
 
-        protected EventBase()
+        internal EventBase()
         {
             eventId = Guid.NewGuid();
             timestamp = DateTime.UtcNow;

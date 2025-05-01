@@ -2,6 +2,9 @@
 using Logic.Repositories;
 using Data.Users;
 using Data.Implementations;
+using Data.Enums;
+using Data.API.Models;
+using Data.Factories;
 
 namespace Services.Test
 {
@@ -17,7 +20,9 @@ namespace Services.Test
             _context = new InMemoryDataContext();
             var userRepository = new UserRepository(_context);
             var eventService = new EventService(new EventRepository(_context));
-            _userService = new UserService(userRepository, eventService);
+            var eventFactory = new EventFactory();
+            var userFactory = new UserFactory();
+            _userService = new UserService(userRepository, eventService, eventFactory, userFactory);
         }
 
         [TestMethod]

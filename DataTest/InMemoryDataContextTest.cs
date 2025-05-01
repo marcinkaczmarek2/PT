@@ -2,7 +2,7 @@
 using Data.Users;
 using Data.Catalog;
 using Data.Events;
-
+using Data.Enums;
 namespace Memory.Tests
 {
     [TestClass]

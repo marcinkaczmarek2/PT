@@ -1,11 +1,11 @@
-﻿using Data.Events;
+﻿using Data.API.Models;
 
 namespace Logic.Services.Interfaces
 {
     public interface IEventService
     {
-        bool AddEvent(EventBase eventBase);
-        List<EventBase> GetAllEvents();
+        bool AddEvent(IEvent eventBase);
+        List<IEvent> GetAllEvents();
     }
 
 }

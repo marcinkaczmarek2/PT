@@ -2,6 +2,8 @@
 using Data.Catalog;
 using Data.Implementations;
 using Logic.Repositories;
+using Data.Enums;
+using Data.Factories;
 
 namespace Library.LogicTest
 {
@@ -16,7 +18,9 @@ namespace Library.LogicTest
         {
             _context = new InMemoryDataContext();
             var repository = new LibraryRepository(_context);
-            _service = new LibraryService(repository);
+            var eventService = new EventService(new EventRepository(_context));
+            var eventFactory = new EventFactory();
+            _service = new LibraryService(repository, eventService, eventFactory);
         }
 
         [TestMethod]

@@ -1,5 +1,5 @@
 ﻿using Data.API;
-using Data.Catalog;
+using Data.API.Models;
 using Logic.Repositories.Interfaces;
 
 namespace Logic.Repositories
@@ -13,7 +13,7 @@ namespace Logic.Repositories
             this.context = context;
         }
 
-        public void AddContent(Borrowable content)
+        public void AddContent(IBorrowable content)
         {
             this.context.AddItem(content);
         }
@@ -23,12 +23,12 @@ namespace Logic.Repositories
             return this.context.DeleteItem(id);
         }
 
-        public Borrowable? GetContent(Guid id)
+        public IBorrowable? GetContent(Guid id)
         {
             return this.context.GetItem(id);
         }
 
-        public List<Borrowable> GetAllContent()
+        public List<IBorrowable> GetAllContent()
         {
             return this.context.GetItems();
         }

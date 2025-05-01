@@ -1,4 +1,5 @@
-﻿
+﻿using Data.Enums;
+
 namespace Data.Catalog
 {
     internal sealed class BoardGame : Borrowable
@@ -17,28 +18,5 @@ namespace Data.Catalog
             this.recommendedAge = recommendedAge;
             this.genre = genre;
         }
-    }
-
-    internal enum GameGenre
-    {
-        Strategy,
-        Party,
-        Cooperative,
-        Competitive,
-        Abstract,
-        Thematic,
-        DeckBuilding,
-        RolePlaying,
-        WarGame,
-        Economic,
-        Puzzle,
-        Family,
-        Trivia,
-        Dexterity,
-        Adventure,
-        AreaControl,
-        Bluffing,
-        Storytelling,
-        WorkerPlacement
     }
 }

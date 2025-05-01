@@ -1,5 +1,6 @@
 ﻿using Data.Users;
 
+using Data.Enums;
 namespace Users.Tests
 {
     [TestClass]

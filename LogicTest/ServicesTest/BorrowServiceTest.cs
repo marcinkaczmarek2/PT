@@ -3,6 +3,10 @@ using Data.Users;
 using Data.Implementations;
 using Logic.Repositories;
 using Logic.Services;
+using Data.Enums;
+using Data.Factories;
+
+using Data.API.Models;
 
 [TestClass]
 public class BorrowServiceTest
@@ -20,8 +24,9 @@ public class BorrowServiceTest
         var userRepository = new UserRepository(_context);
         var libraryRepository = new LibraryRepository(_context);
         var eventService = new EventService(new EventRepository(_context));
+        var eventFactory = new EventFactory();
 
-        _borrowService = new BorrowService(userRepository, libraryRepository, eventService);
+        _borrowService = new BorrowService(userRepository, libraryRepository, eventService, eventFactory);
 
         var reader = new Reader("John", "Doe", "john@example.com", "+123", UserRole.Reader, 0.0);
         var book = new Book("The Great Adventure", "Publisher", true, "Author Name", 123, BookGenre.Adventure);
@@ -40,14 +45,14 @@ public class BorrowServiceTest
 
         Assert.IsTrue(result, "BorrowItem should return true.");
 
-        List<Borrowable> items = _context.GetItems();
+        List<IBorrowable> items = _context.GetItems();
         bool found = false;
         foreach (Borrowable item in items)
         {
             if (item.id == _itemId)
             {
                 found = true;
-                Assert.IsFalse(item.availbility, "Item should not be available after borrowing.");
+                Assert.IsFalse(item.availability, "Item should not be available after borrowing.");
                 break;
             }
         }

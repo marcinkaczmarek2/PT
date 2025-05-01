@@ -2,6 +2,7 @@
 using Data.Events;
 using Data.Implementations;
 using Logic.Repositories;
+using Data.API.Models;
 
 namespace Services.Test
 {
@@ -28,7 +29,7 @@ namespace Services.Test
 
             Assert.IsTrue(result, "AddEvent should return true.");
 
-            List<EventBase> events = _context.GetEvents();
+            List<IEvent> events = _context.GetEvents();
             bool found = false;
             foreach (EventBase e in events)
             {
@@ -47,7 +48,7 @@ namespace Services.Test
             var eventBase = new ItemAddedEvent(Guid.NewGuid(), "Another Title");
             _context.AddEvent(eventBase);
 
-            List<EventBase> events = _eventService.GetAllEvents();
+            List<IEvent> events = _eventService.GetAllEvents();
 
             Assert.IsNotNull(events, "Returned event list should not be null.");
             Assert.AreEqual(1, events.Count, "There should be exactly one event.");

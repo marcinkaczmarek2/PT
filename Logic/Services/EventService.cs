@@ -1,4 +1,4 @@
-﻿using Data.Events;
+﻿using Data.API.Models;
 using Logic.Repositories;
 using Logic.Services.Interfaces;
 
@@ -13,7 +13,7 @@ namespace Logic.Services
             this.eventRepository = eventRepository;
         }
 
-        public bool AddEvent(EventBase eventBase)
+        public bool AddEvent(IEvent eventBase)
         {
             if (eventBase == null)
             {
@@ -24,7 +24,7 @@ namespace Logic.Services
             return true;
         }
 
-        public List<EventBase> GetAllEvents()
+        public List<IEvent> GetAllEvents()
         {
             var receivedList = eventRepository.GetAllEvents();
             if (receivedList.Count == 0)

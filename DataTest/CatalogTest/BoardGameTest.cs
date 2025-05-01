@@ -1,4 +1,5 @@
 ﻿using Data.Catalog;
+using Data.Enums;
 
 namespace Catalog.Tests
 {
@@ -20,7 +21,7 @@ namespace Catalog.Tests
 
             Assert.AreEqual(title, boardGame.title);
             Assert.AreEqual(publisher, boardGame.publisher);
-            Assert.AreEqual(availability, boardGame.availbility);
+            Assert.AreEqual(availability, boardGame.availability);
             Assert.AreEqual(minPlayers, boardGame.minimumNumberOfPlayers);
             Assert.AreEqual(maxPlayers, boardGame.maximumNumberOfPlayers);
             Assert.AreEqual(recommendedAge, boardGame.recommendedAge);

@@ -1,6 +1,7 @@
 ﻿using Logic.Repositories;
 using Data.Events;
 using Data.Implementations;
+using Data.API.Models;
 
 namespace Repositories.Test
 {
@@ -24,7 +25,7 @@ namespace Repositories.Test
 
             _repo.AddEvent(itemAddedEvent);
 
-            List<EventBase> events = _context.GetEvents();
+            List<IEvent> events = _context.GetEvents();
             Assert.AreEqual(1, events.Count, "Should have exactly one event.");
             Assert.AreEqual(itemAddedEvent.eventId, events[0].eventId, "Event IDs should match.");
         }
@@ -38,7 +39,7 @@ namespace Repositories.Test
             _context.AddEvent(event1);
             _context.AddEvent(event2);
 
-            List<EventBase> events = _repo.GetAllEvents();
+            List<IEvent> events = _repo.GetAllEvents();
 
             Assert.AreEqual(2, events.Count, "Should return exactly two events.");
         }

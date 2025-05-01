@@ -1,6 +1,8 @@
 ﻿using Logic.Repositories;
 using Data.Catalog;
 using Data.Implementations;
+using Data.Enums;
+using Data.API.Models;
 
 namespace Repositories.Test
 {
@@ -24,7 +26,7 @@ namespace Repositories.Test
 
             _repo.AddContent(book);
 
-            List<Borrowable> items = _context.GetItems();
+            List<IBorrowable> items = _context.GetItems();
             Assert.AreEqual(1, items.Count, "Should have exactly one item added.");
             Assert.AreEqual(book.id, items[0].id, "Item IDs should match.");
         }

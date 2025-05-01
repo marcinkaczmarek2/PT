@@ -1,5 +1,6 @@
 ﻿using Data.Catalog;
 
+using Data.Enums;
 namespace Catalog.Tests
 {
     [TestClass]
@@ -19,7 +20,7 @@ namespace Catalog.Tests
 
             Assert.AreEqual(title, book.title);
             Assert.AreEqual(publisher, book.publisher);
-            Assert.AreEqual(availability, book.availbility);
+            Assert.AreEqual(availability, book.availability);
             Assert.AreEqual(author, book.author);
             Assert.AreEqual(numberOfPages, book.numberOfPages);
             Assert.AreEqual(genre, book.genre);
