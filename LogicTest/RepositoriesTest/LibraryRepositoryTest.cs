@@ -1,72 +1,98 @@
-﻿using Logic.Repositories;
-using Data.Catalog;
-using Data.Implementations;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic.Repositories;
 using Data.Enums;
+using Data.Catalog;
 using Data.API.Models;
+using Data.API;
+using System;
+using System.Collections.Generic;
 
 namespace Repositories.Test
 {
     [TestClass]
     public class LibraryRepositoryTest
     {
-        private InMemoryDataContext _context;
+        private FakeDataContext _context;
         private LibraryRepository _repo;
 
         [TestInitialize]
         public void Initialize()
         {
-            _context = new InMemoryDataContext();
+            _context = new FakeDataContext();
             _repo = new LibraryRepository(_context);
         }
 
         [TestMethod]
         public void AddContent_ShouldAddItem()
         {
-            var book = new Book("Test Book", "TestPublisher", true, "Author Name", 250, BookGenre.Fantasy);
+            var item = new TestBorrowable("Test Item", "Publisher", true);
 
-            _repo.AddContent(book);
+            _repo.AddContent(item);
 
-            List<IBorrowable> items = _context.GetItems();
-            Assert.AreEqual(1, items.Count, "Should have exactly one item added.");
-            Assert.AreEqual(book.id, items[0].id, "Item IDs should match.");
+            Assert.AreEqual(1, _context.Items.Count, "Should have exactly one item added.");
+            Assert.AreEqual(item.id, _context.Items[0].id, "Item IDs should match.");
         }
 
         [TestMethod]
         public void RemoveContent_ShouldRemoveItem()
         {
-            var boardGame = new BoardGame("Test Game", "GamePublisher", true, 2, 6, 10, GameGenre.Strategy);
-            _context.AddItem(boardGame);
+            var item = new TestBorrowable("Game", "GamePublisher", true);
+            _context.Items.Add(item);
 
-            bool removed = _repo.RemoveContent(boardGame.id);
+            bool removed = _repo.RemoveContent(item.id);
 
-            Assert.IsTrue(removed, "RemoveContent should return true when item is removed.");
-            Assert.AreEqual(0, _context.GetItems().Count, "Context should be empty after removal.");
+            Assert.IsTrue(removed, "Should return true when item is removed.");
+            Assert.AreEqual(0, _context.Items.Count, "Should be empty after removal.");
         }
 
         [TestMethod]
         public void GetContent_ShouldReturnCorrectItem()
         {
-            var book = new Book("Another Book", "PublisherX", true, "Author X", 300, BookGenre.History);
-            _context.AddItem(book);
+            var item = new TestBorrowable("Another Item", "PublisherX", true);
+            _context.Items.Add(item);
 
-            var retrieved = _repo.GetContent(book.id);
+            var retrieved = _repo.GetContent(item.id);
 
-            Assert.IsNotNull(retrieved, "Retrieved item should not be null.");
-            Assert.AreEqual(book.id, retrieved.id, "Item IDs should match.");
+            Assert.IsNotNull(retrieved);
+            Assert.AreEqual(item.id, retrieved.id);
         }
 
         [TestMethod]
         public void GetAllContent_ShouldReturnAllItems()
         {
-            var book = new Book("Item1", "Publisher1", true, "Author1", 100, BookGenre.Adventure);
-            var boardGame = new BoardGame("Item2", "Publisher2", true, 2, 5, 12, GameGenre.Party);
+            var item1 = new TestBorrowable("Item1", "Publisher1", true);
+            var item2 = new TestBorrowable("Item2", "Publisher2", true);
+            _context.Items.Add(item1);
+            _context.Items.Add(item2);
 
-            _context.AddItem(book);
-            _context.AddItem(boardGame);
+            var result = _repo.GetAllContent();
 
-            var items = _repo.GetAllContent();
+            Assert.AreEqual(2, result.Count);
+        }
+        private class FakeDataContext : IData
+        {
+            public List<IBorrowable> Items { get; } = new();
 
-            Assert.AreEqual(2, items.Count, "Should return exactly two items.");
+            public void AddItem(IBorrowable b) => Items.Add(b);
+
+            public bool DeleteItem(Guid id) => Items.RemoveAll(x => x.id == id) > 0;
+
+            public IBorrowable? GetItem(Guid id) => Items.Find(x => x.id == id);
+
+            public List<IBorrowable> GetItems() => Items;
+
+            public List<IUser> GetUsers() => throw new NotImplementedException();
+            public IUser? GetUser(Guid id) => throw new NotImplementedException();
+            public void AddUser(IUser user) => throw new NotImplementedException();
+            public bool DeleteUser(Guid id) => throw new NotImplementedException();
+            public List<IEvent> GetEvents() => throw new NotImplementedException();
+            public void AddEvent(IEvent eventBase) => throw new NotImplementedException();
+        }
+
+        private class TestBorrowable : Borrowable
+        {
+            public TestBorrowable(string title, string publisher, bool availability)
+                : base(title, publisher, availability) { }
         }
     }
 }

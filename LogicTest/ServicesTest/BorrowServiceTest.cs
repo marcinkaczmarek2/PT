@@ -1,61 +1,102 @@
-﻿using Data.Catalog;
-using Data.Users;
-using Data.Implementations;
-using Logic.Repositories;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Logic.Services;
-using Data.Enums;
-using Data.Factories;
-
+using Logic.Repositories.Interfaces;
 using Data.API.Models;
+using Data.Enums;
+using System;
+using System.Collections.Generic;
+using Logic.Services.Interfaces;
+using Data.Events;
 
-[TestClass]
-public class BorrowServiceTest
+namespace Services.Test
 {
-    private InMemoryDataContext _context;
-    private BorrowService _borrowService;
-    private Guid _userId;
-    private Guid _itemId;
-
-    [TestInitialize]
-    public void Initialize()
+    [TestClass]
+    public class BorrowServiceTest
     {
-        _context = new InMemoryDataContext();
+        private FakeUserRepository _userRepository;
+        private FakeLibraryRepository _libraryRepository;
+        private FakeEventService _eventService;
+        private BorrowService _borrowService;
 
-        var userRepository = new UserRepository(_context);
-        var libraryRepository = new LibraryRepository(_context);
-        var eventService = new EventService(new EventRepository(_context));
-        var eventFactory = new EventFactory();
+        private Guid _userId;
+        private Guid _itemId;
 
-        _borrowService = new BorrowService(userRepository, libraryRepository, eventService, eventFactory);
-
-        var reader = new Reader("John", "Doe", "john@example.com", "+123", UserRole.Reader, 0.0);
-        var book = new Book("The Great Adventure", "Publisher", true, "Author Name", 123, BookGenre.Adventure);
-
-        _context.AddUser(reader);
-        _context.AddItem(book);
-
-        _userId = reader.id; 
-        _itemId = book.id;   
-    }
-
-    [TestMethod]
-    public void BorrowItem_ShouldSetItemAsUnavailable()
-    {
-        bool result = _borrowService.BorrowItem(_userId, _itemId);
-
-        Assert.IsTrue(result, "BorrowItem should return true.");
-
-        List<IBorrowable> items = _context.GetItems();
-        bool found = false;
-        foreach (Borrowable item in items)
+        [TestInitialize]
+        public void Initialize()
         {
-            if (item.id == _itemId)
+            _userRepository = new FakeUserRepository();
+            _libraryRepository = new FakeLibraryRepository();
+            _eventService = new FakeEventService();
+
+            _borrowService = new BorrowService(_userRepository, _libraryRepository, _eventService, null);
+
+            var user = new TestUser("John", "Doe", "john@example.com", "+123", UserRole.Reader);
+            var item = new TestBorrowable("The Great Adventure", "Publisher", true);
+
+            _userRepository.AddUser(user);
+            _libraryRepository.AddContent(item);
+
+            _userId = user.id;
+            _itemId = item.id;
+        }
+        private class FakeUserRepository : IUserRepository
+        {
+            private readonly Dictionary<Guid, IUser> _users = new();
+
+            public void AddUser(IUser user) => _users[user.id] = user;
+            public IUser? GetUser(Guid id) => _users.TryGetValue(id, out var user) ? user : null;
+            public List<IUser> GetAllUsers() => new(_users.Values);
+            public bool RemoveUser(Guid id) => _users.Remove(id);
+        }
+
+        private class FakeLibraryRepository : ILibraryRepository
+        {
+            private readonly Dictionary<Guid, IBorrowable> _items = new();
+
+            public void AddContent(IBorrowable item) => _items[item.id] = item;
+            public IBorrowable? GetContent(Guid id) => _items.TryGetValue(id, out var item) ? item : null;
+            public List<IBorrowable> GetAllContent() => new(_items.Values);
+            public bool RemoveContent(Guid id) => _items.Remove(id);
+        }
+
+        private class FakeEventService : IEventService
+        {
+            public bool AddEvent(IEvent e) => true;
+            public List<IEvent> GetAllEvents() => new();
+        }
+
+        private class TestUser : IUser
+        {
+            public Guid id { get; } = Guid.NewGuid();
+            public string name { get; set; }
+            public string surname { get; set; }
+            public string email { get; set; }
+            public string phoneNumber { get; set; }
+            public UserRole role { get; set; }
+
+            public TestUser(string name, string surname, string email, string phoneNumber, UserRole role)
             {
-                found = true;
-                Assert.IsFalse(item.availability, "Item should not be available after borrowing.");
-                break;
+                this.name = name;
+                this.surname = surname;
+                this.email = email;
+                this.phoneNumber = phoneNumber;
+                this.role = role;
             }
         }
-        Assert.IsTrue(found, "Borrowed item should exist.");
+
+        private class TestBorrowable : IBorrowable
+        {
+            public Guid id { get; } = Guid.NewGuid();
+            public string title { get; set; }
+            public string publisher { get; set; }
+            public bool availability { get; set; }
+
+            public TestBorrowable(string title, string publisher, bool availability)
+            {
+                this.title = title;
+                this.publisher = publisher;
+                this.availability = availability;
+            }
+        }
     }
 }

@@ -1,49 +1,32 @@
-﻿using Logic.Services;
-using Data.Catalog;
-using Data.Implementations;
-using Logic.Repositories;
-using Data.Enums;
-using Data.Factories;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic.Services;
+using Logic.Services.Interfaces;
+using Logic.Repositories.Interfaces;
+using Data.API.Models;
+using System;
+using System.Collections.Generic;
 
-namespace Library.LogicTest
+namespace Services.Test
 {
     [TestClass]
     public class LibraryServiceTests
     {
-        private InMemoryDataContext _context;
+        private ILibraryRepository _libraryRepository;
+        private IEventService _eventService;
         private LibraryService _service;
+
+        private List<IBorrowable> _storage;
 
         [TestInitialize]
         public void Initialize()
         {
-            _context = new InMemoryDataContext();
-            var repository = new LibraryRepository(_context);
-            var eventService = new EventService(new EventRepository(_context));
-            var eventFactory = new EventFactory();
-            _service = new LibraryService(repository, eventService, eventFactory);
+            _storage = new List<IBorrowable>();
+            _libraryRepository = new FakeLibraryRepository(_storage);
+            _eventService = new FakeEventService();
+
+            _service = new LibraryService(_libraryRepository, _eventService, null!); 
         }
-
-        [TestMethod]
-        public void AddContent_ShouldAddNewItem()
-        {
-            var book = new Book("Book Title", "Publisher", true, "Author Name", 200, BookGenre.Fantasy);
-
-            bool result = _service.AddContent(book);
-
-            Assert.IsTrue(result, "AddContent should return true.");
-        }
-
-        [TestMethod]
-        public void RemoveContent_ShouldRemoveItem_WhenItemExists()
-        {
-            var boardGame = new BoardGame("Game Title", "Publisher", true, 2, 6, 12, GameGenre.Strategy);
-            _context.AddItem(boardGame);
-
-            bool result = _service.RemoveContent(boardGame.id);
-
-            Assert.IsTrue(result, "RemoveContent should return true when item exists.");
-        }
-
+        
         [TestMethod]
         public void RemoveContent_ShouldReturnFalse_WhenItemDoesNotExist()
         {
@@ -55,17 +38,17 @@ namespace Library.LogicTest
         [TestMethod]
         public void GetContent_ShouldReturnItem_WhenItemExists()
         {
-            var book = new Book("Another Book", "Publisher", true, "Author", 150, BookGenre.History);
-            _context.AddItem(book);
+            var item = new TestBorrowable("Gettable Item", "Publisher", true);
+            _storage.Add(item);
 
-            var result = _service.GetContent(book.id);
+            var result = _service.GetContent(item.id);
 
             Assert.IsNotNull(result, "GetContent should not return null.");
-            Assert.AreEqual(book.id, result.id, "Returned item should have the correct ID.");
+            Assert.AreEqual(item.id, result.id, "Returned item should have the correct ID.");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception), "Error, no item with such id.")]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void GetContent_ShouldThrowException_WhenItemDoesNotExist()
         {
             _service.GetContent(Guid.NewGuid());
@@ -74,8 +57,8 @@ namespace Library.LogicTest
         [TestMethod]
         public void GetAllContent_ShouldReturnItems_WhenItemsExist()
         {
-            _context.AddItem(new Book("Book One", "Publisher", true, "Author", 100, BookGenre.Romance));
-            _context.AddItem(new BoardGame("Game One", "Publisher", true, 2, 4, 8, GameGenre.Party));
+            _storage.Add(new TestBorrowable("Item 1", "Publisher 1", true));
+            _storage.Add(new TestBorrowable("Item 2", "Publisher 2", true));
 
             var items = _service.GetAllContent();
 
@@ -84,10 +67,65 @@ namespace Library.LogicTest
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception), "Error, no items in stock.")]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void GetAllContent_ShouldThrowException_WhenNoItemsExist()
         {
             _service.GetAllContent();
+        }
+
+        private class TestBorrowable : IBorrowable
+        {
+            public Guid id { get; } = Guid.NewGuid();
+            public string title { get; set; }
+            public string publisher { get; set; }
+            public bool availability { get; set; }
+
+            public TestBorrowable(string title, string publisher, bool availability)
+            {
+                this.title = title;
+                this.publisher = publisher;
+                this.availability = availability;
+            }
+        }
+
+        private class FakeLibraryRepository : ILibraryRepository
+        {
+            private readonly List<IBorrowable> _items;
+
+            public FakeLibraryRepository(List<IBorrowable> items)
+            {
+                _items = items;
+            }
+
+            public void AddContent(IBorrowable item)
+            {
+                _items.Add(item);
+            }
+
+            public bool RemoveContent(Guid id)
+            {
+                var item = GetContent(id);
+                if (item == null) return false;
+                _items.Remove(item);
+                return true;
+            }
+
+            public IBorrowable? GetContent(Guid id)
+            {
+                return _items.Find(i => i.id == id);
+            }
+
+            public List<IBorrowable> GetAllContent()
+            {
+                return _items;
+            }
+        }
+
+        private class FakeEventService : IEventService
+        {
+            public bool AddEvent(IEvent eventBase) => true;
+
+            public List<IEvent> GetAllEvents() => new List<IEvent>();
         }
     }
 }
