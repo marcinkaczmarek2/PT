@@ -1,35 +1,33 @@
-﻿using Logic.Repositories.Interfaces;
-using Data.API;
-using Data.API.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Logic.Models;
+using Logic.Repositories.Interfaces;
+
 namespace Logic.Repositories
 {
-    internal class UserRepository : IUserRepository
+    public class UserRepository : IUserRepository
     {
-        private readonly IData context;
-
-        public UserRepository(IData context)
-        {
-            this.context = context;
-        }
+        private readonly List<IUser> users = new();
 
         public void AddUser(IUser user)
         {
-            context.AddUser(user);
+            users.Add(user);
         }
 
         public bool RemoveUser(Guid id)
         {
-            return context.DeleteUser(id);
+            return users.RemoveAll(u => u.Id == id) > 0;
         }
 
         public IUser? GetUser(Guid id)
         {
-            return context.GetUser(id);
+            return users.FirstOrDefault(u => u.Id == id);
         }
 
         public List<IUser> GetAllUsers()
         {
-            return context.GetUsers();
+            return new List<IUser>(users);
         }
     }
 }

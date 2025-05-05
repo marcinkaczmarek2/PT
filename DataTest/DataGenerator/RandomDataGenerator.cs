@@ -108,7 +108,7 @@ namespace DataTest.TestDataGeneration
         private void GenerateEvents()
         {
             List<IUser> users = _context.GetUsers();
-            List<IBorrowable> items = _context.GetItems();
+            List<IBorrowableD> items = _context.GetItems();
 
             for (int i = 0; i < 10; i++)
             {

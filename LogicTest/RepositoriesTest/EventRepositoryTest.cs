@@ -47,20 +47,20 @@ namespace Repositories.Test
         }
         private class FakeDataContext : Data.API.IData
         {
-            public List<IEvent> StoredEvents { get; } = new();
+            public List<IEventD> StoredEvents { get; } = new();
 
-            public List<IEvent> GetEvents() => StoredEvents;
+            public List<IEventD> GetEvents() => StoredEvents;
 
-            public void AddEvent(IEvent e) => StoredEvents.Add(e);
+            public void AddEvent(IEventD e) => StoredEvents.Add(e);
 
             public void AddUser(Data.API.Models.IUser user) { }
-            public void AddItem(Data.API.Models.IBorrowable item) { }
+            public void AddItem(Data.API.Models.IBorrowableD item) { }
             public bool DeleteUser(Guid id) => false;
             public bool DeleteItem(Guid id) => false;
             public Data.API.Models.IUser? GetUser(Guid id) => null;
             public List<Data.API.Models.IUser> GetUsers() => new();
-            public Data.API.Models.IBorrowable? GetItem(Guid id) => null;
-            public List<Data.API.Models.IBorrowable> GetItems() => new();
+            public Data.API.Models.IBorrowableD? GetItem(Guid id) => null;
+            public List<Data.API.Models.IBorrowableD> GetItems() => new();
         }
         private class TestEvent : EventBase
         {

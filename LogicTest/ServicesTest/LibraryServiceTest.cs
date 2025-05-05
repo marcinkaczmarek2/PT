@@ -1,131 +1,133 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic.Models;
+using Logic.Repositories.Interfaces;
 using Logic.Services;
 using Logic.Services.Interfaces;
-using Logic.Repositories.Interfaces;
-using Data.API.Models;
 using System;
 using System.Collections.Generic;
 
 namespace Services.Test
 {
     [TestClass]
-    public class LibraryServiceTests
+    public class LibraryServiceTest
     {
-        private ILibraryRepository _libraryRepository;
-        private IEventService _eventService;
         private LibraryService _service;
+        private FakeLibraryRepository _libraryRepo;
+        private FakeEventService _eventService;
+        private FakeEventFactory _eventFactory;
 
-        private List<IBorrowable> _storage;
+        private Guid _itemId;
 
         [TestInitialize]
-        public void Initialize()
+        public void Init()
         {
-            _storage = new List<IBorrowable>();
-            _libraryRepository = new FakeLibraryRepository(_storage);
+            _libraryRepo = new FakeLibraryRepository();
             _eventService = new FakeEventService();
+            _eventFactory = new FakeEventFactory();
 
-            _service = new LibraryService(_libraryRepository, _eventService, null!); 
-        }
-        
-        [TestMethod]
-        public void RemoveContent_ShouldReturnFalse_WhenItemDoesNotExist()
-        {
-            bool result = _service.RemoveContent(Guid.NewGuid());
+            _service = new LibraryService(_libraryRepo, _eventService, _eventFactory);
 
-            Assert.IsFalse(result, "RemoveContent should return false when item does not exist.");
-        }
-
-        [TestMethod]
-        public void GetContent_ShouldReturnItem_WhenItemExists()
-        {
-            var item = new TestBorrowable("Gettable Item", "Publisher", true);
-            _storage.Add(item);
-
-            var result = _service.GetContent(item.id);
-
-            Assert.IsNotNull(result, "GetContent should not return null.");
-            Assert.AreEqual(item.id, result.id, "Returned item should have the correct ID.");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void GetContent_ShouldThrowException_WhenItemDoesNotExist()
-        {
-            _service.GetContent(Guid.NewGuid());
-        }
-
-        [TestMethod]
-        public void GetAllContent_ShouldReturnItems_WhenItemsExist()
-        {
-            _storage.Add(new TestBorrowable("Item 1", "Publisher 1", true));
-            _storage.Add(new TestBorrowable("Item 2", "Publisher 2", true));
-
-            var items = _service.GetAllContent();
-
-            Assert.IsNotNull(items, "Returned list should not be null.");
-            Assert.AreEqual(2, items.Count, "Should return exactly two items.");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void GetAllContent_ShouldThrowException_WhenNoItemsExist()
-        {
-            _service.GetAllContent();
-        }
-
-        private class TestBorrowable : IBorrowable
-        {
-            public Guid id { get; } = Guid.NewGuid();
-            public string title { get; set; }
-            public string publisher { get; set; }
-            public bool availability { get; set; }
-
-            public TestBorrowable(string title, string publisher, bool availability)
+            var item = new FakeBorrowable
             {
-                this.title = title;
-                this.publisher = publisher;
-                this.availability = availability;
-            }
+                Title = "Test Book",
+                Publisher = "Test Pub",
+                availability = true
+            };
+
+            _itemId = item.Id;
+            _libraryRepo.AddContent(item);
+        }
+
+        [TestMethod]
+        public void AddItem_ShouldStoreItem()
+        {
+            var newItem = new FakeBorrowable
+            {
+                Title = "New Book",
+                Publisher = "New Pub",
+                availability = true
+            };
+
+            var result = _service.AddContent(newItem);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(2, _libraryRepo.GetAllContent().Count);
+            Assert.AreEqual(1, _eventService.Events.Count);
+        }
+
+        [TestMethod]
+        public void RemoveItem_ShouldRemoveItem()
+        {
+            var result = _service.RemoveContent(_itemId);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(0, _libraryRepo.GetAllContent().Count);
+            Assert.AreEqual(1, _eventService.Events.Count);
+        }
+
+        [TestMethod]
+        public void GetItem_ShouldReturnCorrectItem()
+        {
+            var item = _service.GetContent(_itemId);
+
+            Assert.IsNotNull(item);
+            Assert.AreEqual(_itemId, item!.Id);
+        }
+
+        [TestMethod]
+        public void GetAllItems_ShouldReturnAll()
+        {
+            var result = _service.GetAllContent();
+            Assert.AreEqual(1, result.Count);
+        }
+
+        // ==== Fake Implementacje ====
+
+        private class FakeBorrowable : IBorrowableL
+        {
+            public Guid Id { get; } = Guid.NewGuid();
+            public string Title { get; set; } = "";
+            public string Publisher { get; set; } = "";
+            public bool availability { get; set; }
         }
 
         private class FakeLibraryRepository : ILibraryRepository
         {
-            private readonly List<IBorrowable> _items;
+            private readonly Dictionary<Guid, IBorrowableL> items = new();
 
-            public FakeLibraryRepository(List<IBorrowable> items)
-            {
-                _items = items;
-            }
+            public void AddContent(IBorrowableL item) => items[item.Id] = item;
+            public bool RemoveContent(Guid id) => items.Remove(id);
+            public IBorrowableL? GetContent(Guid id) => items.TryGetValue(id, out var i) ? i : null;
+            public List<IBorrowableL> GetAllContent() => new(items.Values);
+        }
 
-            public void AddContent(IBorrowable item)
-            {
-                _items.Add(item);
-            }
-
-            public bool RemoveContent(Guid id)
-            {
-                var item = GetContent(id);
-                if (item == null) return false;
-                _items.Remove(item);
-                return true;
-            }
-
-            public IBorrowable? GetContent(Guid id)
-            {
-                return _items.Find(i => i.id == id);
-            }
-
-            public List<IBorrowable> GetAllContent()
-            {
-                return _items;
-            }
+        private class FakeEvent : IEventL
+        {
+            public Guid EventId { get; } = Guid.NewGuid();
+            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         }
 
         private class FakeEventService : IEventService
         {
-            public bool AddEvent(IEvent eventBase) => true;
+            public List<IEventL> Events { get; } = new();
 
-            public List<IEvent> GetAllEvents() => new List<IEvent>();
+            public bool AddEvent(IEventL e)
+            {
+                Events.Add(e);
+                return true;
+            }
+
+            public List<IEventL> GetAllEvents() => Events;
+        }
+
+        private class FakeEventFactory : IEventFactory
+        {
+            public IEventL CreateItemAddedEvent(Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateItemBorrowedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateItemRemovedEvent(Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateItemReturnedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateUserAddedEvent(Guid userId, string userEmail) => new FakeEvent();
+            public IEventL CreateUserRemovedEvent(Guid userId, string userEmail) => new FakeEvent();
         }
     }
 }

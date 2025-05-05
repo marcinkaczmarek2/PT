@@ -11,13 +11,13 @@ namespace Data.API
         bool DeleteUser(Guid id);
 
         // Borrowables
-        IBorrowable? GetItem(Guid id);
-        List<IBorrowable> GetItems();
-        void AddItem(IBorrowable item);
+        IBorrowableD? GetItem(Guid id);
+        List<IBorrowableD> GetItems();
+        void AddItem(IBorrowableD item);
         bool DeleteItem(Guid id);
 
         // Events
-        List<IEvent> GetEvents();
-        void AddEvent(IEvent eventBase);
+        List<IEventD> GetEvents();
+        void AddEvent(IEventD eventBase);
     }
 }

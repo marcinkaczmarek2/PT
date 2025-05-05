@@ -1,6 +1,6 @@
 ﻿namespace Data.API.Models
 {
-    public interface IBorrowable
+    public interface IBorrowableD
     {
         Guid id { get; }
         string title { get; set; }

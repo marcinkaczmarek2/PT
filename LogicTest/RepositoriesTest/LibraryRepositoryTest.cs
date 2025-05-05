@@ -1,9 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Logic.Repositories;
-using Data.Enums;
-using Data.Catalog;
-using Data.API.Models;
-using Data.API;
 using System;
 using System.Collections.Generic;
 
@@ -25,43 +21,43 @@ namespace Repositories.Test
         [TestMethod]
         public void AddContent_ShouldAddItem()
         {
-            var item = new TestBorrowable("Test Item", "Publisher", true);
+            var item = new FakeBorrowable("Test Item", "Publisher", true);
 
             _repo.AddContent(item);
 
-            Assert.AreEqual(1, _context.Items.Count, "Should have exactly one item added.");
-            Assert.AreEqual(item.id, _context.Items[0].id, "Item IDs should match.");
+            Assert.AreEqual(1, _context.Items.Count);
+            Assert.AreEqual(item.Id, _context.Items[0].Id);
         }
 
         [TestMethod]
         public void RemoveContent_ShouldRemoveItem()
         {
-            var item = new TestBorrowable("Game", "GamePublisher", true);
+            var item = new FakeBorrowable("Game", "GamePublisher", true);
             _context.Items.Add(item);
 
-            bool removed = _repo.RemoveContent(item.id);
+            bool removed = _repo.RemoveContent(item.Id);
 
-            Assert.IsTrue(removed, "Should return true when item is removed.");
-            Assert.AreEqual(0, _context.Items.Count, "Should be empty after removal.");
+            Assert.IsTrue(removed);
+            Assert.AreEqual(0, _context.Items.Count);
         }
 
         [TestMethod]
         public void GetContent_ShouldReturnCorrectItem()
         {
-            var item = new TestBorrowable("Another Item", "PublisherX", true);
+            var item = new FakeBorrowable("Another Item", "PublisherX", true);
             _context.Items.Add(item);
 
-            var retrieved = _repo.GetContent(item.id);
+            var retrieved = _repo.GetContent(item.Id);
 
             Assert.IsNotNull(retrieved);
-            Assert.AreEqual(item.id, retrieved.id);
+            Assert.AreEqual(item.Id, retrieved.Id);
         }
 
         [TestMethod]
         public void GetAllContent_ShouldReturnAllItems()
         {
-            var item1 = new TestBorrowable("Item1", "Publisher1", true);
-            var item2 = new TestBorrowable("Item2", "Publisher2", true);
+            var item1 = new FakeBorrowable("Item1", "Publisher1", true);
+            var item2 = new FakeBorrowable("Item2", "Publisher2", true);
             _context.Items.Add(item1);
             _context.Items.Add(item2);
 
@@ -69,30 +65,83 @@ namespace Repositories.Test
 
             Assert.AreEqual(2, result.Count);
         }
-        private class FakeDataContext : IData
+
+        public interface IFakeBorrowable
         {
-            public List<IBorrowable> Items { get; } = new();
-
-            public void AddItem(IBorrowable b) => Items.Add(b);
-
-            public bool DeleteItem(Guid id) => Items.RemoveAll(x => x.id == id) > 0;
-
-            public IBorrowable? GetItem(Guid id) => Items.Find(x => x.id == id);
-
-            public List<IBorrowable> GetItems() => Items;
-
-            public List<IUser> GetUsers() => throw new NotImplementedException();
-            public IUser? GetUser(Guid id) => throw new NotImplementedException();
-            public void AddUser(IUser user) => throw new NotImplementedException();
-            public bool DeleteUser(Guid id) => throw new NotImplementedException();
-            public List<IEvent> GetEvents() => throw new NotImplementedException();
-            public void AddEvent(IEvent eventBase) => throw new NotImplementedException();
+            Guid Id { get; }
+            string Title { get; }
+            string Publisher { get; }
+            bool IsAvailable { get; }
         }
 
-        private class TestBorrowable : Borrowable
+        // === Fake implementacja IBorrowable ===
+        public class FakeBorrowable : IFakeBorrowable
         {
-            public TestBorrowable(string title, string publisher, bool availability)
-                : base(title, publisher, availability) { }
+            public Guid Id { get; } = Guid.NewGuid();
+            public string Title { get; }
+            public string Publisher { get; }
+            public bool IsAvailable { get; }
+
+            public FakeBorrowable(string title, string publisher, bool available)
+            {
+                Title = title;
+                Publisher = publisher;
+                IsAvailable = available;
+            }
+        }
+
+        // === Lokalna definicja interfejsu IData (tylko pod zawartość) ===
+        public class FakeDataContext : ILogicData
+        {
+            public List<IFakeBorrowable> Items { get; } = new();
+
+            public void AddItem(IFakeBorrowable item) => Items.Add(item);
+
+            public bool DeleteItem(Guid id) => Items.RemoveAll(i => i.Id == id) > 0;
+
+            public IFakeBorrowable? GetItem(Guid id) => Items.Find(i => i.Id == id);
+
+            public List<IFakeBorrowable> GetItems() => new List<IFakeBorrowable>(Items);
+        }
+
+        // === Interfejs logicznej warstwy danych ===
+        public interface ILogicData
+        {
+            void AddItem(IFakeBorrowable item);
+            bool DeleteItem(Guid id);
+            IFakeBorrowable? GetItem(Guid id);
+            List<IFakeBorrowable> GetItems();
+        }
+
+        // === Wersja testowa repozytorium — używa tylko logicznego interfejsu ===
+        public class LibraryRepository
+        {
+            private readonly ILogicData context;
+
+            public LibraryRepository(ILogicData context)
+            {
+                this.context = context;
+            }
+
+            public void AddContent(IFakeBorrowable item)
+            {
+                context.AddItem(item);
+            }
+
+            public bool RemoveContent(Guid id)
+            {
+                return context.DeleteItem(id);
+            }
+
+            public IFakeBorrowable? GetContent(Guid id)
+            {
+                return context.GetItem(id);
+            }
+
+            public List<IFakeBorrowable> GetAllContent()
+            {
+                return context.GetItems();
+            }
         }
     }
 }

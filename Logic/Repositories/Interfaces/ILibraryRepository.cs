@@ -1,12 +1,12 @@
-﻿using Data.API.Models;
+﻿using Logic.Models;
 
 namespace Logic.Repositories.Interfaces
 {
     public interface ILibraryRepository
     {
-        void AddContent(IBorrowable content);
-        bool RemoveContent(Guid id);
-        IBorrowable? GetContent(Guid id);
-        List<IBorrowable> GetAllContent();
+        void AddContent(IBorrowableL content);
+        bool RemoveContent(Guid Id);
+        IBorrowableL? GetContent(Guid Id);
+        List<IBorrowableL> GetAllContent();
     }
 }

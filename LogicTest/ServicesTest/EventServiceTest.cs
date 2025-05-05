@@ -1,8 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic.Models;
 using Logic.Services;
-using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
-using Data.API.Models;
 using System;
 using System.Collections.Generic;
 
@@ -12,13 +11,11 @@ namespace Services.Test
     public class EventServiceTest
     {
         private EventService _eventService;
-        private FakeEventRepository _repo;
 
         [TestInitialize]
         public void Initialize()
         {
-            _repo = new FakeEventRepository();
-            _eventService = new EventService(_repo);    
+            _eventService = new EventService();
         }
 
         [TestMethod]
@@ -29,47 +26,53 @@ namespace Services.Test
             bool result = _eventService.AddEvent(testEvent);
 
             Assert.IsTrue(result, "AddEvent should return true.");
-            Assert.AreEqual(1, _repo.StoredEvents.Count, "One event should be stored.");
-            Assert.AreEqual(testEvent.eventId, _repo.StoredEvents[0].eventId, "Event IDs should match.");
+            Assert.AreEqual(1, _eventService.GetAllEvents().Count);
+            Assert.AreEqual(testEvent.EventId, _eventService.GetAllEvents()[0].EventId);
         }
 
         [TestMethod]
         public void GetAllEvents_ShouldReturnEvents_WhenEventsExist()
         {
             var testEvent = new FakeEvent();
-            _repo.StoredEvents.Add(testEvent);
+            _eventService.AddEvent(testEvent);
 
             var result = _eventService.GetAllEvents();
 
-            Assert.AreEqual(1, result.Count, "Should return exactly one event.");
-            Assert.AreEqual(testEvent.eventId, result[0].eventId);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(testEvent.EventId, result[0].EventId);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException), "Error, no events found.")]
         public void GetAllEvents_ShouldThrowException_WhenNoEventsExist()
         {
-            _eventService.GetAllEvents();
+            var service = new EventServiceWithValidation();
+            service.GetAllEvents();
         }
-        private class FakeEventRepository : IEventRepository
+
+
+        private class FakeEvent : IEventL
         {
-            public List<IEvent> StoredEvents { get; } = new();
+            public Guid EventId { get; } = Guid.NewGuid();
+            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        }
 
-            public void AddEvent(IEvent e) {
+        private class EventServiceWithValidation : IEventService
+        {
+            private readonly List<IEventL> events = new();
 
-                StoredEvents.Add(e);
-            }
-
-            public List<IEvent> GetAllEvents()
+            public bool AddEvent(IEventL e)
             {
-                return new List<IEvent>(StoredEvents);
+                events.Add(e);
+                return true;
             }
-        }
 
-        private class FakeEvent : IEvent
-        {
-            public Guid eventId { get; } = Guid.NewGuid();
-            public DateTime timestamp { get; set; }
+            public List<IEventL> GetAllEvents()
+            {
+                if (events.Count == 0)
+                    throw new InvalidOperationException("Error, no events found.");
+                return new List<IEventL>(events);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Data.Events
 {
-    internal abstract class EventBase : IEvent
+    internal abstract class EventBase : IEventD
     {
         public DateTime timestamp { get; set; }
         public Guid eventId { get; private set; }

@@ -3,7 +3,7 @@ using Data.API.Models;
 
 namespace Data.Catalog
 {
-    internal abstract class Borrowable : IBorrowable
+    internal abstract class Borrowable : IBorrowableD
     {
         public Guid id {  get; }
         public string title {  set; get; }

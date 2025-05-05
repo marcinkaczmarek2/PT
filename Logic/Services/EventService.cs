@@ -1,36 +1,26 @@
-﻿using Data.API.Models;
-using Logic.Repositories.Interfaces;
-using Logic.Services.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Logic.Models;
+using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
     internal sealed class EventService : IEventService
     {
-        private readonly IEventRepository eventRepository;
+        private readonly List<IEventL> events = new();
 
-        internal EventService(IEventRepository eventRepository)
+        public bool AddEvent(IEventL e)
         {
-            this.eventRepository = eventRepository;
-        }
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
-        public bool AddEvent(IEvent eventBase)
-        {
-            if (eventBase == null)
-                throw new InvalidOperationException("Error, event cannot be null.");
-
-            eventRepository.AddEvent(eventBase);
+            events.Add(e);
             return true;
         }
 
-        public List<IEvent> GetAllEvents()
+        public List<IEventL> GetAllEvents()
         {
-            var receivedList = eventRepository.GetAllEvents();
-            if (receivedList.Count == 0)
-                throw new InvalidOperationException("Error, no events found.");
-
-            return receivedList;
+            return new List<IEventL>(events); 
         }
     }
 }

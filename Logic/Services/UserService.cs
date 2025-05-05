@@ -1,5 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using Data.API.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Logic.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
@@ -22,12 +25,13 @@ namespace Logic.Services
 
         public bool AddUser(IUser user)
         {
-            if (userRepository.GetUser(user.id) != null)
+            if (userRepository.GetUser(user.Id) != null)
             {
                 throw new InvalidOperationException("Error, cannot add another user with the same id.");
             }
+
             userRepository.AddUser(user);
-            eventService.AddEvent(eventFactory.CreateUserAddedEvent(user.id, user.email));
+            eventService.AddEvent(eventFactory.CreateUserAddedEvent(user.Id, user.Email));
             return true;
         }
 
@@ -38,7 +42,8 @@ namespace Logic.Services
             {
                 return false;
             }
-            eventService.AddEvent(eventFactory.CreateUserRemovedEvent(existingUser.id, existingUser.email));
+
+            eventService.AddEvent(eventFactory.CreateUserRemovedEvent(existingUser.Id, existingUser.Email));
             return userRepository.RemoveUser(id);
         }
 
@@ -64,22 +69,23 @@ namespace Logic.Services
 
         public IUser CreateReader(string name, string surname, string email, string phoneNumber)
         {
-            var existingUser = userRepository.GetAllUsers().FirstOrDefault(u => u.email == email);
+            var existingUser = userRepository.GetAllUsers().FirstOrDefault(u => u.Email == email);
             if (existingUser != null)
             {
                 throw new InvalidOperationException("Error, User already exists with this email.");
             }
+
             if (!IsValidEmail(email))
             {
                 throw new InvalidOperationException("Error, email must have '@' and '.' signs in it.");
             }
+
             if (!IsValidPhoneNumber(phoneNumber))
             {
                 throw new InvalidOperationException("Error, phone number can consist of only numbers.");
             }
-            var newUser = userFactory.CreateReader(name, surname, email, phoneNumber);
 
-            return newUser;
+            return userFactory.CreateReader(name, surname, email, phoneNumber);
         }
 
         public bool RegisterReader(string name, string surname, string email, string phoneNumber)

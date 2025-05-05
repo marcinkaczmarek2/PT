@@ -1,36 +1,31 @@
-﻿using Data.API;
-using Data.API.Models;
+﻿using Logic.Models;
 using Logic.Repositories.Interfaces;
+using System.Collections.Generic;
 
 namespace Logic.Repositories
 {
-    internal class LibraryRepository : ILibraryRepository
+    public class LibraryRepository : ILibraryRepository
     {
-        private readonly IData context;
+        private readonly List<IBorrowableL> items = new();
 
-        public LibraryRepository(IData context)
+        public void AddContent(IBorrowableL item)
         {
-            this.context = context;
+            items.Add(item);
         }
 
-        public void AddContent(IBorrowable content)
+        public IBorrowableL? GetContent(Guid id)
         {
-            this.context.AddItem(content);
+            return items.Find(i => i.Id == id);
+        }
+
+        public List<IBorrowableL> GetAllContent()
+        {
+            return new List<IBorrowableL>(items);
         }
 
         public bool RemoveContent(Guid id)
         {
-            return this.context.DeleteItem(id);
-        }
-
-        public IBorrowable? GetContent(Guid id)
-        {
-            return this.context.GetItem(id);
-        }
-
-        public List<IBorrowable> GetAllContent()
-        {
-            return this.context.GetItems();
+            return items.RemoveAll(i => i.Id == id) > 0;
         }
     }
 }

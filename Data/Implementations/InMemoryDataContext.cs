@@ -6,8 +6,8 @@ namespace Data.Implementations
     internal sealed class InMemoryDataContext : IData
     {
         private Dictionary<Guid, IUser> users = new();
-        private Dictionary<Guid, IBorrowable> items = new();
-        private List<IEvent> events = new();
+        private Dictionary<Guid, IBorrowableD> items = new();
+        private List<IEventD> events = new();
 
         // Users 
         public IUser? GetUser(Guid id)
@@ -31,17 +31,17 @@ namespace Data.Implementations
         }
 
         // Borrowables
-        public IBorrowable? GetItem(Guid id)
+        public IBorrowableD? GetItem(Guid id)
         {
             return items.GetValueOrDefault(id);
         }
 
-        public List<IBorrowable> GetItems()
+        public List<IBorrowableD> GetItems()
         {
             return items.Values.ToList();
         }
 
-        public void AddItem(IBorrowable item)
+        public void AddItem(IBorrowableD item)
         {
             items[item.id] = item;
         }
@@ -52,12 +52,12 @@ namespace Data.Implementations
         }
 
         // Events
-        public List<IEvent> GetEvents()
+        public List<IEventD> GetEvents()
         {
             return events.ToList();
         }
 
-        public void AddEvent(IEvent eventBase)
+        public void AddEvent(IEventD eventBase)
         {
             events.Add(eventBase);
         }

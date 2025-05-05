@@ -1,15 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic.Models;
 using Logic.Services;
 using Logic.Services.Interfaces;
 using Logic.Repositories.Interfaces;
-using Data.Enums;
-using Data.Users;
-using Data.Events;
-using Data.Factories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Data.API.Models;
 
 namespace Services.Test
 {
@@ -19,16 +15,18 @@ namespace Services.Test
         private UserService _userService;
         private FakeUserRepository _userRepo;
         private FakeEventService _eventService;
+        private FakeUserFactory _userFactory;
+        private FakeEventFactory _eventFactory;
 
         [TestInitialize]
         public void Initialize()
         {
             _userRepo = new FakeUserRepository();
             _eventService = new FakeEventService();
-            var userFactory = new UserFactory();
-            var eventFactory = new EventFactory();
+            _userFactory = new FakeUserFactory();
+            _eventFactory = new FakeEventFactory();
 
-            _userService = new UserService(_userRepo, _eventService, eventFactory, userFactory);
+            _userService = new UserService(_userRepo, _eventService, _eventFactory, _userFactory);
         }
 
         [TestMethod]
@@ -37,7 +35,7 @@ namespace Services.Test
             var user = new TestUser("John", "Doe", "john@example.com", "123456789", UserRole.Reader);
             _userRepo.AddUser(user);
 
-            bool result = _userService.RemoveUser(user.id);
+            bool result = _userService.RemoveUser(user.Id);
 
             Assert.IsTrue(result);
         }
@@ -56,10 +54,10 @@ namespace Services.Test
             var user = new TestUser("Jane", "Smith", "jane@example.com", "987654321", UserRole.Reader);
             _userRepo.AddUser(user);
 
-            var result = _userService.GetUser(user.id);
+            var result = _userService.GetUser(user.Id);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(user.id, result.id);
+            Assert.AreEqual(user.Id, result.Id);
         }
 
         [TestMethod]
@@ -73,7 +71,7 @@ namespace Services.Test
         public void GetAllUsers_ShouldReturnUsers_WhenExist()
         {
             _userRepo.AddUser(new TestUser("User1", "One", "one@example.com", "123", UserRole.Reader));
-            _userRepo.AddUser(new TestUser("User2", "Two", "two@example.com", "456", UserRole.Admin));
+            _userRepo.AddUser(new TestUser("User2", "Two", "two@example.com", "456", UserRole.Librarian));
 
             var users = _userService.GetAllUsers();
 
@@ -93,7 +91,7 @@ namespace Services.Test
             var result = _userService.CreateReader("Alice", "Wonderland", "alice@example.com", "123456789");
 
             Assert.IsNotNull(result);
-            Assert.AreEqual("Alice", result.name);
+            Assert.AreEqual("Alice", result.Name);
         }
 
         [TestMethod]
@@ -148,10 +146,23 @@ namespace Services.Test
             Assert.IsFalse(result);
         }
 
-        private class TestUser : User
+        private class TestUser : IUser
         {
+            public Guid Id { get; } = Guid.NewGuid();
+            public string Name { get; set; }
+            public string Surname { get; set; }
+            public string Email { get; set; }
+            public string PhoneNumber { get; set; }
+            public UserRole Role { get; set; }
+
             public TestUser(string name, string surname, string email, string phoneNumber, UserRole role)
-                : base(name, surname, email, phoneNumber, role) { }
+            {
+                Name = name;
+                Surname = surname;
+                Email = email;
+                PhoneNumber = phoneNumber;
+                Role = role;
+            }
         }
 
         private class FakeUserRepository : IUserRepository
@@ -160,9 +171,7 @@ namespace Services.Test
 
             public void AddUser(IUser user)
             {
-                if (_users.ContainsKey(user.id))
-                    throw new InvalidOperationException("User already exists.");
-                _users[user.id] = user;
+                _users[user.Id] = user;
             }
 
             public bool RemoveUser(Guid id) => _users.Remove(id);
@@ -172,12 +181,35 @@ namespace Services.Test
             public List<IUser> GetAllUsers() => _users.Values.ToList();
         }
 
-
         private class FakeEventService : IEventService
         {
-            public bool AddEvent(IEvent eventBase) => true;
+            public bool AddEvent(IEventL eventBase) => true;
 
-            public List<IEvent> GetAllEvents() => new List<IEvent>(); 
+            public List<IEventL> GetAllEvents() => new();
+        }
+
+        private class FakeUserFactory : IUserFactory
+        {
+            public IUser CreateReader(string name, string surname, string email, string phoneNumber)
+            {
+                return new TestUser(name, surname, email, phoneNumber, UserRole.Reader);
+            }
+        }
+
+        private class FakeEventFactory : IEventFactory
+        {
+            public IEventL CreateItemAddedEvent(Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateItemBorrowedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateItemRemovedEvent(Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateItemReturnedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
+            public IEventL CreateUserAddedEvent(Guid userId, string userEmail) => new FakeEvent();
+            public IEventL CreateUserRemovedEvent(Guid userId, string userEmail) => new FakeEvent();
+        }
+
+        private class FakeEvent : IEventL
+        {
+            public Guid EventId { get; } = Guid.NewGuid();
+            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         }
     }
 }
