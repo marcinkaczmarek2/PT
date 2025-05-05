@@ -1,72 +1,88 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic.Repositories;
-using Data.API.Models;
 using System;
 using System.Collections.Generic;
-using Data.Events;
 
 namespace Repositories.Test
 {
     [TestClass]
     public class EventRepositoryTest
     {
-        private FakeDataContext _fakeContext;
+        private FakeDataContext _context;
         private EventRepository _repo;
 
         [TestInitialize]
         public void Initialize()
         {
-            _fakeContext = new FakeDataContext();
-            _repo = new EventRepository(_fakeContext);
+            _context = new FakeDataContext();
+            _repo = new EventRepository(_context);
         }
 
         [TestMethod]
         public void AddEvent_ShouldCallContext()
         {
-            var testEvent = new TestEvent();
+            var testEvent = new FakeEvent();
 
             _repo.AddEvent(testEvent);
 
-            var events = _fakeContext.StoredEvents;
-            Assert.AreEqual(1, events.Count, "Should have exactly one event.");
-            Assert.AreEqual(testEvent.eventId, events[0].eventId, "Event IDs should match.");
+            Assert.AreEqual(1, _context.StoredEvents.Count);
+            Assert.AreEqual(testEvent.EventId, _context.StoredEvents[0].EventId);
         }
 
         [TestMethod]
         public void GetAllEvents_ShouldReturnAllEvents()
         {
-            var event1 = new TestEvent();
-            var event2 = new TestEvent();
+            var e1 = new FakeEvent();
+            var e2 = new FakeEvent();
 
-            _fakeContext.StoredEvents.Add(event1);
-            _fakeContext.StoredEvents.Add(event2);
+            _context.StoredEvents.Add(e1);
+            _context.StoredEvents.Add(e2);
 
-            var events = _repo.GetAllEvents();
+            var result = _repo.GetAllEvents();
 
-            Assert.AreEqual(2, events.Count, "Should return exactly two events.");
+            Assert.AreEqual(2, result.Count);
         }
-        private class FakeDataContext : Data.API.IData
+
+        public interface IEventFake
         {
-            public List<IEventD> StoredEvents { get; } = new();
-
-            public List<IEventD> GetEvents() => StoredEvents;
-
-            public void AddEvent(IEventD e) => StoredEvents.Add(e);
-
-            public void AddUser(Data.API.Models.IUser user) { }
-            public void AddItem(Data.API.Models.IBorrowableD item) { }
-            public bool DeleteUser(Guid id) => false;
-            public bool DeleteItem(Guid id) => false;
-            public Data.API.Models.IUser? GetUser(Guid id) => null;
-            public List<Data.API.Models.IUser> GetUsers() => new();
-            public Data.API.Models.IBorrowableD? GetItem(Guid id) => null;
-            public List<Data.API.Models.IBorrowableD> GetItems() => new();
+            Guid EventId { get; }
+            DateTime Timestamp { get; set; }
         }
-        private class TestEvent : EventBase
+
+        public class FakeEvent : IEventFake
         {
-            public TestEvent()
+            public Guid EventId { get; } = Guid.NewGuid();
+            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        }
+
+        public interface ILogicEventData
+        {
+            void AddEvent(IEventFake e);
+            List<IEventFake> GetEvents();
+        }
+
+        public class FakeDataContext : ILogicEventData
+        {
+            public List<IEventFake> StoredEvents { get; } = new();
+            public void AddEvent(IEventFake e) => StoredEvents.Add(e);
+            public List<IEventFake> GetEvents() => StoredEvents;
+        }
+
+        public class EventRepository
+        {
+            private readonly ILogicEventData context;
+            public EventRepository(ILogicEventData context)
             {
-                typeof(EventBase).GetProperty("eventId")?.SetValue(this, Guid.NewGuid());
+                this.context = context;
+            }
+
+            public void AddEvent(IEventFake e)
+            {
+                context.AddEvent(e);
+            }
+
+            public List<IEventFake> GetAllEvents()
+            {
+                return context.GetEvents();
             }
         }
     }

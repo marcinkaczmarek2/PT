@@ -73,8 +73,6 @@ namespace Repositories.Test
             string Publisher { get; }
             bool IsAvailable { get; }
         }
-
-        // === Fake implementacja IBorrowable ===
         public class FakeBorrowable : IFakeBorrowable
         {
             public Guid Id { get; } = Guid.NewGuid();
@@ -90,7 +88,6 @@ namespace Repositories.Test
             }
         }
 
-        // === Lokalna definicja interfejsu IData (tylko pod zawartość) ===
         public class FakeDataContext : ILogicData
         {
             public List<IFakeBorrowable> Items { get; } = new();
@@ -103,8 +100,7 @@ namespace Repositories.Test
 
             public List<IFakeBorrowable> GetItems() => new List<IFakeBorrowable>(Items);
         }
-
-        // === Interfejs logicznej warstwy danych ===
+        
         public interface ILogicData
         {
             void AddItem(IFakeBorrowable item);
@@ -112,8 +108,6 @@ namespace Repositories.Test
             IFakeBorrowable? GetItem(Guid id);
             List<IFakeBorrowable> GetItems();
         }
-
-        // === Wersja testowa repozytorium — używa tylko logicznego interfejsu ===
         public class LibraryRepository
         {
             private readonly ILogicData context;
