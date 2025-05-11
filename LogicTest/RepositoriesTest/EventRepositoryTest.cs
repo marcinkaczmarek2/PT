@@ -1,11 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using Logic.Repositories;
+﻿using Logic.Repositories;
 using Data.API;
 using Data.API.Models;
-using Logic.Repositories.Interfaces;
-using Data.Catalog;
 
 [TestClass]
 public class EventRepositoryTest

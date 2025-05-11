@@ -1,8 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using Logic.Services;
-using Logic.Services.Interfaces;
+﻿using Logic.Services;
 using Data.API.Models;
 
 [TestClass]

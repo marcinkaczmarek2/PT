@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using Logic.Repositories;
+﻿using Logic.Repositories;
 using Logic.Repositories.Interfaces;
 using Data.API.Models;
 
