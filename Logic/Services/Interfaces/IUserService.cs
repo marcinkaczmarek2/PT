@@ -1,4 +1,4 @@
-﻿using Logic.Models;
+﻿using Data.API.Models;
 
 namespace Logic.Services.Interfaces
 {

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Logic.Models;
+using Data.API.Models;
 using Logic.Services.Interfaces;
 
 namespace Logic.Services
 {
     internal sealed class EventService : IEventService
     {
-        private readonly List<IEventL> events = new();
+        private readonly List<IEvent> events = new();
 
-        public bool AddEvent(IEventL e)
+        public bool AddEvent(IEvent e)
         {
             if (e == null)
                 throw new ArgumentNullException(nameof(e));
@@ -18,9 +18,9 @@ namespace Logic.Services
             return true;
         }
 
-        public List<IEventL> GetAllEvents()
+        public List<IEvent> GetAllEvents()
         {
-            return new List<IEventL>(events); 
+            return new List<IEvent>(events); 
         }
     }
 }

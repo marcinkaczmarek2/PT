@@ -4,7 +4,7 @@ namespace Logic.Repositories.Interfaces
 {
     public interface IEventRepository
     {
-        void AddEvent(IEventD eventBase);
-        List<IEventD> GetAllEvents();
+        void AddEvent(IEvent eventBase);
+        List<IEvent> GetAllEvents();
     }
 }

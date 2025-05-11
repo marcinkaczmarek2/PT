@@ -1,4 +1,4 @@
-﻿using Logic.Models;
+﻿using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using System.Collections.Generic;
 
@@ -6,26 +6,26 @@ namespace Logic.Repositories
 {
     public class LibraryRepository : ILibraryRepository
     {
-        private readonly List<IBorrowableL> items = new();
+        private readonly List<IBorrowable> items = new();
 
-        public void AddContent(IBorrowableL item)
+        public void AddContent(IBorrowable item)
         {
             items.Add(item);
         }
 
-        public IBorrowableL? GetContent(Guid id)
+        public IBorrowable? GetContent(Guid id)
         {
-            return items.Find(i => i.Id == id);
+            return items.Find(i => i.id == id);
         }
 
-        public List<IBorrowableL> GetAllContent()
+        public List<IBorrowable> GetAllContent()
         {
-            return new List<IBorrowableL>(items);
+            return new List<IBorrowable>(items);
         }
 
         public bool RemoveContent(Guid id)
         {
-            return items.RemoveAll(i => i.Id == id) > 0;
+            return items.RemoveAll(i => i.id == id) > 0;
         }
     }
 }

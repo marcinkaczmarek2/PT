@@ -22,7 +22,7 @@ namespace DataTest
         [TestMethod]
         public void ShouldGenerateBooksAndBoardGames()
         {
-            List<IBorrowableD> items = _context.GetItems();
+            List<IBorrowable> items = _context.GetItems();
             Assert.IsTrue(items.Count > 0, "No items generated.");
 
             bool hasBook = false;
@@ -72,7 +72,7 @@ namespace DataTest
         [TestMethod]
         public void ShouldGenerateBorrowAndReturnEvents()
         {
-            List<IEventD> events = _context.GetEvents();
+            List<IEvent> events = _context.GetEvents();
             Assert.IsTrue(events.Count > 0, "No events generated.");
 
             bool hasBorrowEvent = false;
@@ -97,9 +97,9 @@ namespace DataTest
         [TestMethod]
         public void BorrowedEvents_ShouldHaveValidUsersAndItems()
         {
-            List<IEventD> events = _context.GetEvents();
+            List<IEvent> events = _context.GetEvents();
             List<IUser> users = _context.GetUsers();
-            List<IBorrowableD> items = _context.GetItems();
+            List<IBorrowable> items = _context.GetItems();
 
             foreach (EventBase e in events)
             {
@@ -135,9 +135,9 @@ namespace DataTest
         [TestMethod]
         public void ReturnedEvents_ShouldHaveValidUsersAndItems()
         {
-            List<IEventD> events = _context.GetEvents();
+            List<IEvent> events = _context.GetEvents();
             List<IUser> users = _context.GetUsers();
-            List<IBorrowableD> items = _context.GetItems();
+            List<IBorrowable> items = _context.GetItems();
 
             foreach (EventBase e in events)
             {

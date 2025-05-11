@@ -1,89 +1,69 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using Logic.Repositories;
+using Data.API;
+using Data.API.Models;
+using Logic.Repositories.Interfaces;
+using Data.Catalog;
 
-namespace Repositories.Test
+[TestClass]
+public class EventRepositoryTest
 {
-    [TestClass]
-    public class EventRepositoryTest
+    private class FakeEvent : IEvent
     {
-        private FakeDataContext _context;
-        private EventRepository _repo;
+        public Guid eventId { get; } = Guid.NewGuid();
+        public DateTime timestamp { get; set; } = DateTime.Now;
+    }
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            _context = new FakeDataContext();
-            _repo = new EventRepository(_context);
-        }
+    private class FakeDataContext : IData
+    {
+        private readonly List<IEvent> events = new();
 
-        [TestMethod]
-        public void AddEvent_ShouldCallContext()
-        {
-            var testEvent = new FakeEvent();
+        public void AddEvent(IEvent eventBase) => events.Add(eventBase);
 
-            _repo.AddEvent(testEvent);
+        public List<IEvent> GetEvents() => new(events);
 
-            Assert.AreEqual(1, _context.StoredEvents.Count);
-            Assert.AreEqual(testEvent.EventId, _context.StoredEvents[0].EventId);
-        }
+        public IUser? GetUser(Guid id) => null;
+        public List<IUser> GetUsers() => new();
+        public void AddUser(IUser user) { }
+        public bool DeleteUser(Guid id) => false;
+        public IBorrowable? GetItem(Guid id) => null;
+        public List<IBorrowable> GetItems() => new();
+        public void AddItem(IBorrowable item) { }
+        public bool DeleteItem(Guid id) => false;
+    }
 
-        [TestMethod]
-        public void GetAllEvents_ShouldReturnAllEvents()
-        {
-            var e1 = new FakeEvent();
-            var e2 = new FakeEvent();
+    [TestMethod]
+    public void AddEvent_AddsToDataContext()
+    {
+        var data = new FakeDataContext();
+        var repo = new EventRepository(data);
+        var ev = new FakeEvent();
 
-            _context.StoredEvents.Add(e1);
-            _context.StoredEvents.Add(e2);
+        repo.AddEvent(ev);
+        var allEvents = repo.GetAllEvents();
 
-            var result = _repo.GetAllEvents();
+        Assert.AreEqual(1, allEvents.Count);
+        Assert.AreEqual(ev.eventId, allEvents[0].eventId);
+    }
 
-            Assert.AreEqual(2, result.Count);
-        }
+    [TestMethod]
+    public void GetAllEvents_ReturnsAllAdded()
+    {
+        var data = new FakeDataContext();
+        var repo = new EventRepository(data);
 
-        public interface IEventFake
-        {
-            Guid EventId { get; }
-            DateTime Timestamp { get; set; }
-        }
+        var e1 = new FakeEvent();
+        var e2 = new FakeEvent();
 
-        public class FakeEvent : IEventFake
-        {
-            public Guid EventId { get; } = Guid.NewGuid();
-            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-        }
+        repo.AddEvent(e1);
+        repo.AddEvent(e2);
 
-        public interface ILogicEventData
-        {
-            void AddEvent(IEventFake e);
-            List<IEventFake> GetEvents();
-        }
+        var result = repo.GetAllEvents();
 
-        public class FakeDataContext : ILogicEventData
-        {
-            public List<IEventFake> StoredEvents { get; } = new();
-            public void AddEvent(IEventFake e) => StoredEvents.Add(e);
-            public List<IEventFake> GetEvents() => StoredEvents;
-        }
-
-        public class EventRepository
-        {
-            private readonly ILogicEventData context;
-            public EventRepository(ILogicEventData context)
-            {
-                this.context = context;
-            }
-
-            public void AddEvent(IEventFake e)
-            {
-                context.AddEvent(e);
-            }
-
-            public List<IEventFake> GetAllEvents()
-            {
-                return context.GetEvents();
-            }
-        }
+        Assert.AreEqual(2, result.Count);
+        Assert.IsTrue(result.Exists(e => e.eventId == e1.eventId));
+        Assert.IsTrue(result.Exists(e => e.eventId == e2.eventId));
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Logic.Models;
+using Data.API.Models;
 
 namespace Logic.Repositories.Interfaces
 {

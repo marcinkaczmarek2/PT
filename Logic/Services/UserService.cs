@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic.Models;
+using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
@@ -25,13 +25,13 @@ namespace Logic.Services
 
         public bool AddUser(IUser user)
         {
-            if (userRepository.GetUser(user.Id) != null)
+            if (userRepository.GetUser(user.id) != null)
             {
                 throw new InvalidOperationException("Error, cannot add another user with the same id.");
             }
 
             userRepository.AddUser(user);
-            eventService.AddEvent(eventFactory.CreateUserAddedEvent(user.Id, user.Email));
+            eventService.AddEvent(eventFactory.CreateUserAddedEvent(user.id, user.email));
             return true;
         }
 
@@ -43,7 +43,7 @@ namespace Logic.Services
                 return false;
             }
 
-            eventService.AddEvent(eventFactory.CreateUserRemovedEvent(existingUser.Id, existingUser.Email));
+            eventService.AddEvent(eventFactory.CreateUserRemovedEvent(existingUser.id, existingUser.email));
             return userRepository.RemoveUser(id);
         }
 
@@ -69,7 +69,7 @@ namespace Logic.Services
 
         public IUser CreateReader(string name, string surname, string email, string phoneNumber)
         {
-            var existingUser = userRepository.GetAllUsers().FirstOrDefault(u => u.Email == email);
+            var existingUser = userRepository.GetAllUsers().FirstOrDefault(u => u.email == email);
             if (existingUser != null)
             {
                 throw new InvalidOperationException("Error, User already exists with this email.");

@@ -1,5 +1,5 @@
 ﻿using System;
-using Logic.Models;
+using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
@@ -11,6 +11,7 @@ namespace Logic.Services
         private readonly ILibraryRepository libraryRepository;
         private readonly IEventService eventService;
         private readonly IEventFactory eventFactory;
+
 
         internal BorrowService(
             IUserRepository userRepository,
@@ -39,7 +40,7 @@ namespace Logic.Services
 
             item.availability = false;
 
-            eventService.AddEvent(eventFactory.CreateItemBorrowedEvent(userId, itemId, item.Title));
+            eventService.AddEvent(eventFactory.CreateItemBorrowedEvent(userId, itemId, item.title));
             return true;
         }
 
@@ -58,7 +59,7 @@ namespace Logic.Services
 
             item.availability = true;
 
-            eventService.AddEvent(eventFactory.CreateItemReturnedEvent(userId, itemId, item.Title));
+            eventService.AddEvent(eventFactory.CreateItemReturnedEvent(userId, itemId, item.title));
             return true;
         }
     }

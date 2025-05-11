@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Logic.Models;
+using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
@@ -22,15 +22,15 @@ namespace Logic.Services
             this.eventFactory = eventFactory;
         }
 
-        public bool AddContent(IBorrowableL content)
+        public bool AddContent(IBorrowable content)
         {
-            if (libraryRepository.GetContent(content.Id) != null)
+            if (libraryRepository.GetContent(content.id) != null)
             {
                 throw new InvalidOperationException("Error, cannot add another item with the same id.");
             }
 
             libraryRepository.AddContent(content);
-            eventService.AddEvent(eventFactory.CreateItemAddedEvent(content.Id, content.Title));
+            eventService.AddEvent(eventFactory.CreateItemAddedEvent(content.id, content.title));
             return true;
         }
 
@@ -42,11 +42,11 @@ namespace Logic.Services
                 return false;
             }
 
-            eventService.AddEvent(eventFactory.CreateItemRemovedEvent(existingContent.Id, existingContent.Title));
+            eventService.AddEvent(eventFactory.CreateItemRemovedEvent(existingContent.id, existingContent.title));
             return libraryRepository.RemoveContent(id);
         }
 
-        public IBorrowableL? GetContent(Guid id)
+        public IBorrowable? GetContent(Guid id)
         {
             var content = libraryRepository.GetContent(id);
             if (content == null)
@@ -56,7 +56,7 @@ namespace Logic.Services
             return content;
         }
 
-        public List<IBorrowableL> GetAllContent()
+        public List<IBorrowable> GetAllContent()
         {
             var items = libraryRepository.GetAllContent();
             if (items.Count == 0)

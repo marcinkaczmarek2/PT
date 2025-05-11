@@ -1,78 +1,61 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic.Models;
-using Logic.Services;
-using Logic.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using Logic.Services;
+using Logic.Services.Interfaces;
+using Data.API.Models;
 
-namespace Services.Test
+[TestClass]
+public class EventServiceTest
 {
-    [TestClass]
-    public class EventServiceTest
+    private class FakeEvent : IEvent
     {
-        private EventService _eventService;
+        public Guid eventId { get; } = Guid.NewGuid();
+        public DateTime timestamp { get; set; } = DateTime.Now;
+    }
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            _eventService = new EventService();
-        }
+    [TestMethod]
+    public void AddEvent_ShouldAddEvent()
+    {
+        var service = new EventService();
+        var e = new FakeEvent();
 
-        [TestMethod]
-        public void AddEvent_ShouldAddEventCorrectly()
-        {
-            var testEvent = new FakeEvent();
+        var result = service.AddEvent(e);
+        var allEvents = service.GetAllEvents();
 
-            bool result = _eventService.AddEvent(testEvent);
+        Assert.IsTrue(result);
+        Assert.AreEqual(1, allEvents.Count);
+        Assert.AreEqual(e.eventId, allEvents[0].eventId);
+    }
 
-            Assert.IsTrue(result, "AddEvent should return true.");
-            Assert.AreEqual(1, _eventService.GetAllEvents().Count);
-            Assert.AreEqual(testEvent.EventId, _eventService.GetAllEvents()[0].EventId);
-        }
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void AddEvent_NullEvent_Throws()
+    {
+        var service = new EventService();
+        service.AddEvent(null!);
+    }
 
-        [TestMethod]
-        public void GetAllEvents_ShouldReturnEvents_WhenEventsExist()
-        {
-            var testEvent = new FakeEvent();
-            _eventService.AddEvent(testEvent);
+    [TestMethod]
+    public void GetAllEvents_ShouldReturnCopy()
+    {
+        var service = new EventService();
+        var e = new FakeEvent();
+        service.AddEvent(e);
 
-            var result = _eventService.GetAllEvents();
+        var events1 = service.GetAllEvents();
+        var events2 = service.GetAllEvents();
 
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(testEvent.EventId, result[0].EventId);
-        }
+        Assert.AreNotSame(events1, events2);
+        Assert.AreEqual(events1.Count, events2.Count);
+    }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException), "Error, no events found.")]
-        public void GetAllEvents_ShouldThrowException_WhenNoEventsExist()
-        {
-            var service = new EventServiceWithValidation();
-            service.GetAllEvents();
-        }
+    [TestMethod]
+    public void GetAllEvents_InitiallyEmpty()
+    {
+        var service = new EventService();
+        var result = service.GetAllEvents();
 
-
-        private class FakeEvent : IEventL
-        {
-            public Guid EventId { get; } = Guid.NewGuid();
-            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-        }
-
-        private class EventServiceWithValidation : IEventService
-        {
-            private readonly List<IEventL> events = new();
-
-            public bool AddEvent(IEventL e)
-            {
-                events.Add(e);
-                return true;
-            }
-
-            public List<IEventL> GetAllEvents()
-            {
-                if (events.Count == 0)
-                    throw new InvalidOperationException("Error, no events found.");
-                return new List<IEventL>(events);
-            }
-        }
+        Assert.AreEqual(0, result.Count);
     }
 }

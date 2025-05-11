@@ -1,4 +1,4 @@
-﻿using Logic.Models;
+﻿using Data.API.Models;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ namespace Logic.Services.Interfaces
 {
     public interface IEventService
     {
-        bool AddEvent(IEventL eventBase);
-        List<IEventL> GetAllEvents();
+        bool AddEvent(IEvent eventBase);
+        List<IEvent> GetAllEvents();
     }
 }

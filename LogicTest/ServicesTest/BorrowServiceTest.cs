@@ -1,125 +1,204 @@
-﻿    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Collections.Generic;
-    using Logic.Models;
-    using Logic.Repositories.Interfaces;
-    using Logic.Services;
-    using Logic.Services.Interfaces;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using Logic.Services;
+using Logic.Repositories.Interfaces;
+using Logic.Services.Interfaces;
+using Data.API.Models;
+using Data.Enums;
 
-namespace Services.Test
+[TestClass]
+public class BorrowServiceTest
 {
-    [TestClass]
-    public class BorrowServiceTest
+    private class FakeUser : IUser
     {
-        private BorrowService _service;
-        private FakeUserRepository _userRepo;
-        private FakeLibraryRepository _libraryRepo;
-        private FakeEventService _eventService;
-        private FakeEventFactory _eventFactory;
+        public Guid id { get; set; }
+        public string name { get; set; } = "";
+        public string surname { get; set; } = "";
+        public string email { get; set; } = "";
+        public string phoneNumber { get; set; } = "";
+        public UserRole role { get; set; }
+    }
 
-        private Guid _userId;
-        private Guid _itemId;
+    private class FakeItem : IBorrowable
+    {
+        public Guid id { get; set; }
+        public string title { get; set; } = "";
+        public string publisher { get; set; } = "";
+        public bool availability { get; set; } = true;
+    }
 
-        [TestInitialize]
-        public void Init()
+    private class FakeEvent : IEvent
+    {
+        public Guid eventId { get; } = Guid.NewGuid();
+        public DateTime timestamp { get; set; } = DateTime.Now;
+    }
+
+    private class FakeUserRepo : IUserRepository
+    {
+        private readonly Dictionary<Guid, IUser> users = new();
+
+        public void AddUser(IUser user) => users[user.id] = user;
+
+        public IUser? GetUser(Guid id) => users.TryGetValue(id, out var u) ? u : null;
+
+        public List<IUser> GetAllUsers() => new(users.Values);
+
+        public bool RemoveUser(Guid id) => users.Remove(id);
+    }
+
+
+    private class FakeLibraryRepo : ILibraryRepository
+    {
+        private readonly Dictionary<Guid, IBorrowable> items = new();
+
+        public void AddContent(IBorrowable content) => items[content.id] = content;
+
+        public bool RemoveContent(Guid id) => items.Remove(id);
+
+        public IBorrowable? GetContent(Guid id) => items.TryGetValue(id, out var item) ? item : null;
+
+        public List<IBorrowable> GetAllContent() => new(items.Values);
+    }
+
+
+    private class FakeEventService : IEventService
+    {
+        private readonly List<IEvent> events = new();
+
+        public bool AddEvent(IEvent eventBase)
         {
-            _userRepo = new FakeUserRepository();
-            _libraryRepo = new FakeLibraryRepository();
-            _eventService = new FakeEventService();
-            _eventFactory = new FakeEventFactory();
-
-            _service = new BorrowService(_userRepo, _libraryRepo, _eventService, _eventFactory);
-
-            var user = new FakeUser();
-            var item = new FakeItem { availability = true };
-
-            _userId = user.Id;
-            _itemId = item.Id;
-
-            _userRepo.AddUser(user);
-            _libraryRepo.AddContent(item);
+            events.Add(eventBase);
+            return true;
         }
 
-        [TestMethod]
-        public void BorrowItem_Success()
-        {
-            var result = _service.BorrowItem(_userId, _itemId);
-            Assert.IsTrue(result);
-            Assert.IsFalse(_libraryRepo.GetContent(_itemId)!.availability);
-            Assert.AreEqual(1, _eventService.Events.Count);
-        }
+        public List<IEvent> GetAllEvents() => new(events);
 
-        [TestMethod]
-        public void ReturnItem_Success()
-        {
-            _libraryRepo.GetContent(_itemId)!.availability = false;
+        public List<IEvent> Events => events;
+    }
 
-            var result = _service.ReturnItem(_userId, _itemId);
+    private class FakeEventFactory : IEventFactory
+    {
+        public IEvent CreateItemBorrowedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
+        public IEvent CreateItemReturnedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
+        public IEvent CreateItemAddedEvent(Guid itemId, string itemTitle) => new FakeEvent();
+        public IEvent CreateItemRemovedEvent(Guid itemId, string itemTitle) => new FakeEvent();
+        public IEvent CreateUserAddedEvent(Guid userId, string userEmail) => new FakeEvent();
+        public IEvent CreateUserRemovedEvent(Guid userId, string userEmail) => new FakeEvent();
+    }
 
-            Assert.IsTrue(result);
-            Assert.IsTrue(_libraryRepo.GetContent(_itemId)!.availability);
-            Assert.AreEqual(1, _eventService.Events.Count);
-        }
+    private BorrowService CreateService(out FakeUserRepo userRepo, out FakeLibraryRepo libRepo, out FakeEventService eventSvc)
+    {
+        userRepo = new FakeUserRepo();
+        libRepo = new FakeLibraryRepo();
+        eventSvc = new FakeEventService();
 
-        // === Fakes ===
+        return new BorrowService(userRepo, libRepo, eventSvc, new FakeEventFactory());
+    }
 
-        private class FakeUser : IUser
-        {
-            public Guid Id { get; } = Guid.NewGuid();
-            public string Name { get; set; } = "Test";
-            public string Surname { get; set; } = "User";
-            public string Email { get; set; } = "test@example.com";
-            public string PhoneNumber { get; set; } = "+123456789";
-            public UserRole Role { get; set; } = UserRole.Reader;
-        }
+    [TestMethod]
+    public void BorrowItem_Success()
+    {
+        var service = CreateService(out var users, out var items, out var events);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        users.AddUser(new FakeUser { id = userId });
+        items.AddContent(new FakeItem { id = itemId, availability = true, title = "Title" });
 
-        private class FakeItem : IBorrowableL
-        {
-            public Guid Id { get; } = Guid.NewGuid();
-            public string Title { get; set; } = "Test Book";
-            public string Publisher { get; set; } = "Publisher";
-            public bool availability { get; set; }
-        }
+        var result = service.BorrowItem(userId, itemId);
 
-        private class FakeEvent : IEventL
-        {
-            public Guid EventId { get; } = Guid.NewGuid();
-            public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-        }
+        Assert.IsTrue(result);
+        Assert.IsFalse(items.GetContent(itemId)!.availability);
+        Assert.AreEqual(1, events.Events.Count);
+    }
 
-        private class FakeEventFactory : IEventFactory
-        {
-            public IEventL CreateItemBorrowedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
-            public IEventL CreateItemReturnedEvent(Guid userId, Guid itemId, string itemTitle) => new FakeEvent();
-            public IEventL CreateItemAddedEvent(Guid itemId, string itemTitle) => new FakeEvent();
-            public IEventL CreateItemRemovedEvent(Guid itemId, string itemTitle) => new FakeEvent();
-            public IEventL CreateUserAddedEvent(Guid userId, string userEmail) => new FakeEvent();
-            public IEventL CreateUserRemovedEvent(Guid userId, string userEmail) => new FakeEvent();
-        }
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void BorrowItem_UserNotFound()
+    {
+        var service = CreateService(out _, out var items, out _);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        items.AddContent(new FakeItem { id = itemId, availability = true, title = "Title" });
 
-        private class FakeUserRepository : IUserRepository
-        {
-            private readonly Dictionary<Guid, IUser> users = new();
-            public void AddUser(IUser user) => users[user.Id] = user;
-            public bool RemoveUser(Guid id) => users.Remove(id);
-            public IUser? GetUser(Guid id) => users.TryGetValue(id, out var u) ? u : null;
-            public List<IUser> GetAllUsers() => new(users.Values);
-        }
+        service.BorrowItem(userId, itemId);
+    }
 
-        private class FakeLibraryRepository : ILibraryRepository
-        {
-            private readonly Dictionary<Guid, IBorrowableL> items = new();
-            public void AddContent(IBorrowableL item) => items[item.Id] = item;
-            public bool RemoveContent(Guid id) => items.Remove(id);
-            public IBorrowableL? GetContent(Guid id) => items.TryGetValue(id, out var i) ? i : null;
-            public List<IBorrowableL> GetAllContent() => new(items.Values);
-        }
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void BorrowItem_ItemNotFound()
+    {
+        var service = CreateService(out var users, out _, out _);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        users.AddUser(new FakeUser { id = userId });
 
-        private class FakeEventService : IEventService
-        {
-            public List<IEventL> Events { get; } = new();
-            public bool AddEvent(IEventL e) { Events.Add(e); return true; }
-            public List<IEventL> GetAllEvents() => Events;
-        }
+        service.BorrowItem(userId, itemId);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void BorrowItem_ItemUnavailable()
+    {
+        var service = CreateService(out var users, out var items, out _);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        users.AddUser(new FakeUser { id = userId });
+        items.AddContent(new FakeItem { id = itemId, availability = false, title = "Title" });
+
+        service.BorrowItem(userId, itemId);
+    }
+
+    [TestMethod]
+    public void ReturnItem_Success()
+    {
+        var service = CreateService(out var users, out var items, out var events);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        users.AddUser(new FakeUser { id = userId });
+        items.AddContent(new FakeItem { id = itemId, availability = false, title = "Title" });
+
+        var result = service.ReturnItem(userId, itemId);
+
+        Assert.IsTrue(result);
+        Assert.IsTrue(items.GetContent(itemId)!.availability);
+        Assert.AreEqual(1, events.Events.Count);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void ReturnItem_UserNotFound()
+    {
+        var service = CreateService(out _, out var items, out _);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        items.AddContent(new FakeItem { id = itemId, availability = false, title = "Title" });
+
+        service.ReturnItem(userId, itemId);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void ReturnItem_ItemNotFound()
+    {
+        var service = CreateService(out var users, out _, out _);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        users.AddUser(new FakeUser { id = userId });
+
+        service.ReturnItem(userId, itemId);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void ReturnItem_ItemNotBorrowed()
+    {
+        var service = CreateService(out var users, out var items, out _);
+        var userId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        users.AddUser(new FakeUser { id = userId });
+        items.AddContent(new FakeItem { id = itemId, availability = true, title = "Title" });
+
+        service.ReturnItem(userId, itemId);
     }
 }

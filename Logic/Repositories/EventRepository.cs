@@ -13,12 +13,12 @@ namespace Logic.Repositories
             this.context = context;
         }
 
-        public void AddEvent(IEventD eventBase)
+        public void AddEvent(IEvent eventBase)
         {
             context.AddEvent(eventBase);
         }
 
-        public List<IEventD> GetAllEvents()
+        public List<IEvent> GetAllEvents()
         {
             return context.GetEvents();
         }

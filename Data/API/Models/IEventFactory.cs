@@ -2,11 +2,11 @@
 {
     public interface IEventFactory
     {
-        IEventD CreateItemBorrowedEvent(Guid userId, Guid itemId, string itemTitle);
-        IEventD CreateItemReturnedEvent(Guid userId, Guid itemId, string itemTitle);
-        IEventD CreateItemAddedEvent(Guid itemId, string itemTitle);
-        IEventD CreateItemRemovedEvent(Guid itemId, string itemTitle);
-        IEventD CreateUserAddedEvent(Guid userId, string userEmail);
-        IEventD CreateUserRemovedEvent(Guid userId, string userEmail);
+        IEvent CreateItemBorrowedEvent(Guid userId, Guid itemId, string itemTitle);
+        IEvent CreateItemReturnedEvent(Guid userId, Guid itemId, string itemTitle);
+        IEvent CreateItemAddedEvent(Guid itemId, string itemTitle);
+        IEvent CreateItemRemovedEvent(Guid itemId, string itemTitle);
+        IEvent CreateUserAddedEvent(Guid userId, string userEmail);
+        IEvent CreateUserRemovedEvent(Guid userId, string userEmail);
     }
 }

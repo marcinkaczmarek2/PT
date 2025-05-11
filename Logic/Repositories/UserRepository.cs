@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic.Models;
+using Data.API.Models;
 using Logic.Repositories.Interfaces;
 
 namespace Logic.Repositories
@@ -17,12 +17,12 @@ namespace Logic.Repositories
 
         public bool RemoveUser(Guid id)
         {
-            return users.RemoveAll(u => u.Id == id) > 0;
+            return users.RemoveAll(u => u.id == id) > 0;
         }
 
         public IUser? GetUser(Guid id)
         {
-            return users.FirstOrDefault(u => u.Id == id);
+            return users.FirstOrDefault(u => u.id == id);
         }
 
         public List<IUser> GetAllUsers()
