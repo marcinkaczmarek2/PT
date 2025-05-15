@@ -1,7 +1,7 @@
 ﻿using Data.API.Models;
-using Data.Enums;
+using Data.Implementations.Enums;
 
-namespace Data.Users
+namespace Data.Implementations.Users
 {
     internal abstract class User : IUser
     {

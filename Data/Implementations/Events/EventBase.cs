@@ -1,6 +1,6 @@
 ﻿using Data.API.Models;
 
-namespace Data.Events
+namespace Data.Implementations.Events
 {
     internal abstract class EventBase : IEvent
     {

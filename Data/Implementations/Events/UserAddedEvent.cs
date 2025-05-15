@@ -1,6 +1,4 @@
-﻿
-
-namespace Data.Events
+﻿namespace Data.Implementations.Events
 {
     internal class UserAddedEvent : EventBase
     {

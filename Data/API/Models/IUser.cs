@@ -1,4 +1,4 @@
-﻿using Data.Enums;
+﻿using Data.Implementations.Enums;
 namespace Data.API.Models
 {
     public interface IUser

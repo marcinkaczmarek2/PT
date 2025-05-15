@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Data.API.Models;
+﻿using Data.API.Models;
 using Logic.Services.Interfaces;
 
-namespace Logic.Services
+namespace Logic.Services.Implementations
 {
     internal sealed class EventService : IEventService
     {

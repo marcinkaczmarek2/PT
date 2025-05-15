@@ -1,7 +1,6 @@
-﻿
-using Data.API.Models;
+﻿using Data.API.Models;
 
-namespace Data.Catalog
+namespace Data.Implementations.Catalog
 {
     internal abstract class Borrowable : IBorrowable
     {
@@ -15,7 +14,7 @@ namespace Data.Catalog
             id = Guid.NewGuid();
             this.title = title;
             this.publisher = publisher;
-            this.availability = availbility;
+            availability = availbility;
         }
     }
     

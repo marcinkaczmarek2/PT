@@ -1,5 +1,4 @@
-﻿
-namespace Data.Events
+﻿namespace Data.Implementations.Events
 {
     internal class ItemBorrowedEvent : EventBase
     {

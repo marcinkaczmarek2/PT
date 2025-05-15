@@ -1,9 +1,8 @@
-﻿using System;
-using Data.API.Models;
+﻿using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
-namespace Logic.Services
+namespace Logic.Services.Implementations
 {
     internal sealed class BorrowService : IBorrowService
     {

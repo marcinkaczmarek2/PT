@@ -1,7 +1,7 @@
 ﻿using Data.API.Models;
-using Data.Events;
+using Data.Implementations.Events;
 
-namespace Data.Factories
+namespace Data.Implementations.Factories
 {
     internal class EventFactory : IEventFactory
     {

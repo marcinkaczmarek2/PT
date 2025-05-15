@@ -1,7 +1,6 @@
-﻿using DataLayerTest.TestDataGeneration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using DataTest.TestDataGenerator;
 
-namespace DataLayerTest
+namespace DataTest
 {
     [TestClass]
     public class HardcodedDataTest : DataTest

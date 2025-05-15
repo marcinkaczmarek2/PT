@@ -1,12 +1,9 @@
 ﻿using System.Text.RegularExpressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Data.API.Models;
 using Logic.Repositories.Interfaces;
 using Logic.Services.Interfaces;
 
-namespace Logic.Services
+namespace Logic.Services.Implementations
 {
     internal sealed class UserService : IUserService
     {

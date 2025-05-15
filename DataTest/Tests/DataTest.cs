@@ -1,7 +1,6 @@
 ﻿using Data.API;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataLayerTest
+namespace DataTest
 {
     [TestClass]
     public abstract class DataTest

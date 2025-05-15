@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Data.API.Models;
+﻿using Data.API.Models;
 using Logic.Repositories.Interfaces;
 
-namespace Logic.Repositories
+namespace Logic.Repositories.Implementations
 {
     public class UserRepository : IUserRepository
     {

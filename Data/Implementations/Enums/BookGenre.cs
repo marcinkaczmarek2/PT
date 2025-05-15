@@ -1,6 +1,4 @@
-﻿
-
-namespace Data.Enums
+﻿namespace Data.Implementations.Enums
 {
     public enum BookGenre
     {

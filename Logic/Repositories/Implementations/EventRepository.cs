@@ -2,7 +2,7 @@
 using Data.API.Models;
 using Data.API;
 
-namespace Logic.Repositories
+namespace Logic.Repositories.Implementations
 {
     internal class EventRepository : IEventRepository
     {

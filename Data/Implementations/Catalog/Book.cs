@@ -1,6 +1,6 @@
-﻿using Data.Enums;
+﻿using Data.Implementations.Enums;
 
-namespace Data.Catalog
+namespace Data.Implementations.Catalog
 {
     internal class Book : Borrowable
     {

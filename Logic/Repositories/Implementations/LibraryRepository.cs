@@ -1,8 +1,7 @@
 ﻿using Data.API.Models;
 using Logic.Repositories.Interfaces;
-using System.Collections.Generic;
 
-namespace Logic.Repositories
+namespace Logic.Repositories.Implementations
 {
     public class LibraryRepository : ILibraryRepository
     {

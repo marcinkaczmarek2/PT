@@ -1,6 +1,6 @@
-﻿using Data.Enums;
+﻿using Data.Implementations.Enums;
 
-namespace Data.Users
+namespace Data.Implementations.Users
 {
     internal class Reader : User
     {
@@ -8,7 +8,7 @@ namespace Data.Users
         internal Reader(string name, string surname, string email, string phoneNumber, UserRole role, double debt) 
             : base(name, surname, email, phoneNumber, role)
         {
-            this.borrowedBooks = new List<Guid>();
+            borrowedBooks = new List<Guid>();
         }
         internal void BorrowBook(Guid bookId)
         {

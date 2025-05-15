@@ -1,5 +1,4 @@
-﻿
-namespace Data.Events
+﻿namespace Data.Implementations.Events
 {
     internal class UserRemovedEvent : EventBase
     {

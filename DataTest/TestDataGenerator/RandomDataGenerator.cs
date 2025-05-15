@@ -1,11 +1,10 @@
 ﻿using Data.API;
-using Data.API.Models;
-using Data.Catalog;
-using Data.Enums;
-using Data.Users;
+using Data.Implementations.Catalog;
+using Data.Implementations.Users;
 using Data.Implementations;
+using Data.Implementations.Enums;
 
-namespace DataLayerTest.TestDataGeneration
+namespace DataTest.TestDataGenerator
 {
     internal class RandomDataGenerator : IDataGenerator
     {

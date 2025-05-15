@@ -1,8 +1,8 @@
 ﻿using Data.API.Models;
-using Data.Enums;
-using Data.Users;
+using Data.Implementations.Enums;
+using Data.Implementations.Users;
 
-namespace Data.Factories
+namespace Data.Implementations.Factories
 {
     internal sealed class UserFactory : IUserFactory
     {
