@@ -1,30 +1,18 @@
-﻿using System.ComponentModel;
+﻿using Presentation.Model.API;
 
 namespace Presentation.Model.Implementation
 {
-    public class EventModelData : INotifyPropertyChanged
+    internal class EventModelData : IEventModelData
     {
-        private string _description;
-        private string _date;
+        public int eventId { get; }
+        public int userId { get; }
+        public int bookId { get; }
 
-        public int Id { get; set; }
-
-        public string Description
+        public EventModelData(int eventId, int userId, int bookId)
         {
-            get => _description;
-            set { _description = value; OnPropertyChanged(nameof(Description)); }
-        }
-
-        public string Date
-        {
-            get => _date;
-            set { _date = value; OnPropertyChanged(nameof(Date)); }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.eventId = eventId;
+            this.userId = userId;
+            this.bookId = bookId;
         }
     }
 }

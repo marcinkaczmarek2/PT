@@ -1,28 +1,26 @@
 using Presentation.Model.API;
-using System.ComponentModel;
 
 namespace Presentation.Model.Implementation
 {
-    public class ReaderModelData : IReaderModelData, INotifyPropertyChanged
+    internal class ReaderModelData : IReaderModelData
     {
-        public int Id { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string surname { get; set; }
+        public string email { get; set; }
+        public string phoneNumber { get; set; }
+        public string role { get; set; }
+        public decimal debt { get; set; }
 
-        private string _name;
-        public string Name
+        public ReaderModelData(int id, string name, string surname, string email, string phoneNumber, string role, decimal debt)
         {
-            get => _name;
-            set { _name = value; OnPropertyChanged(nameof(Name)); }
+            this.id = id;
+            this.name = name;
+            this.surname = surname;
+            this.email = email;
+            this.phoneNumber = phoneNumber;
+            this.role = role;
+            this.debt = debt;
         }
-
-        private string _email;
-        public string Email
-        {
-            get => _email;
-            set { _email = value; OnPropertyChanged(nameof(Email)); }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

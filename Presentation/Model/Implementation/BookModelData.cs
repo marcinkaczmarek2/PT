@@ -1,28 +1,24 @@
 using Presentation.Model.API;
-using System.ComponentModel;
 
 namespace Presentation.Model.Implementation
 {
-    public class BookModelData : IBookModelData, INotifyPropertyChanged
+    internal class BookModelData : IBookModelData
     {
-        public int Id { get; set; }
-
-        private string _title;
-        public string Title
+        public BookModelData(int id, string title, string publisher, string author, int numberOfPages, string genre)
         {
-            get => _title;
-            set { _title = value; OnPropertyChanged(nameof(Title)); }
+            id = id;
+            title = title;
+            publisher = publisher;
+            author = author;
+            numberOfPages = numberOfPages;
+            genre = genre;
         }
 
-        private string _author;
-        public string Author
-        {
-            get => _author;
-            set { _author = value; OnPropertyChanged(nameof(Author)); }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public int id { get; set; }
+        public string title { get; set; }
+        public string publisher { get; set; }
+        public string author { get; set; }
+        public int numberOfPages { get; set; }
+        public string genre { get; set; }
     }
 }

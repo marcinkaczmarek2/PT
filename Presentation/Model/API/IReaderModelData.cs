@@ -2,8 +2,12 @@ namespace Presentation.Model.API
 {
     public interface IReaderModelData
     {
-        int Id { get; set; }
-        string Name { get; set; }
-        string Email { get; set; }
+        int id { get; set; }
+        string name { get; set; }
+        string surname { get; set; }
+        string email { get; set; }
+        string phoneNumber { get; set; }
+        string role { get; set; }
+        decimal debt { get; set; }
     }
 }

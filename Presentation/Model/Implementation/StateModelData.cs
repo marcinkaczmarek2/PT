@@ -1,30 +1,18 @@
-﻿using System.ComponentModel;
+﻿using Presentation.Model.API;
 
 namespace Presentation.Model.Implementation
 {
-    public class StateModelData : INotifyPropertyChanged
+    internal class StateModelData : IStateModelData
     {
-        private string _status;
-        private string _type;
+        public int stateId { get; set; }
+        public int bookId { get; set; }
+        public int quantity { get; set; }
 
-        public int Id { get; set; }
-
-        public string Status
+        public StateModelData(int stateId, int bookId, int quantity)
         {
-            get => _status;
-            set { _status = value; OnPropertyChanged(nameof(Status)); }
-        }
-
-        public string Type
-        {
-            get => _type;
-            set { _type = value; OnPropertyChanged(nameof(Type)); }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.stateId = stateId;
+            this.bookId = bookId;
+            this.quantity = quantity;
         }
     }
 }
