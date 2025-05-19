@@ -1,48 +1,50 @@
-using System.ComponentModel;
+﻿using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Presentation.View.Employee;
-using Presentation.View.Book;
-using Presentation.View.Reader;
-using Presentation.View.Catalog;
-using Presentation.View.User;
-using Presentation.View.State;
-using Presentation.View.Event;
 
+[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
-    public class ViewModelMain : INotifyPropertyChanged
+    internal class ViewModelMain : PropertyChange
     {
-        private object _currentView;
-        public object CurrentView
+        private PropertyChange _selectedViewModel;
+
+        public PropertyChange SelectedViewModel
         {
-            get => _currentView;
-            set { _currentView = value; OnPropertyChanged(nameof(CurrentView)); }
+            get => _selectedViewModel;
+            set
+            {
+                if (SetProperty(ref _selectedViewModel, value))
+                {
+                    OnPropertyChanged(nameof(SelectedViewModel));
+                }
+            }
         }
 
-        public ICommand ShowEmployeeCommand { get; }
-        public ICommand ShowBookCommand { get; }
-        public ICommand ShowReaderCommand { get; }
-        public ICommand ShowCatalogCommand { get; }
-        public ICommand ShowUserCommand { get; }
-        public ICommand ShowEventCommand { get; }
-        public ICommand ShowStateCommand { get; }
+        public ICommand UpdateViewCommand { get; }
 
         public ViewModelMain()
         {
-            ShowEmployeeCommand = new RelayCommand(_ => CurrentView = new EmployeeMaster());
-            ShowBookCommand = new RelayCommand(_ => CurrentView = new BookMaster());
-            ShowReaderCommand = new RelayCommand(_ => CurrentView = new ReaderMaster());
-            ShowCatalogCommand = new RelayCommand(_ => CurrentView = new CatalogMaster());
-            ShowUserCommand = new RelayCommand(_ => CurrentView = new UserMaster());
-            ShowEventCommand = new RelayCommand(_ => CurrentView = new EventMaster());
-            ShowStateCommand = new RelayCommand(_ => CurrentView = new StateMaster());
-
-            // Domyślny widok startowy
-            CurrentView = new CatalogMaster();
+            UpdateViewCommand = new RelayCommand(ChangeView);
+            SelectedViewModel = new VMBookList(); 
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private void ChangeView(object parameter)
+        {
+            switch (parameter?.ToString())
+            {
+                case "BList":
+                    SelectedViewModel = new VMBookList();
+                    break;
+                case "RList":
+                    SelectedViewModel = new VMReaderList();
+                    break;
+                case "EList":
+                    SelectedViewModel = new VMEventList();
+                    break;
+                case "SList":
+                    SelectedViewModel = new VMStateList();
+                    break;
+            }
+        }
     }
 }

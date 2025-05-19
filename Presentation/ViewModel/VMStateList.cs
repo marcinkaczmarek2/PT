@@ -1,41 +1,53 @@
+﻿using Presentation.Model.API;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Input;
-using Presentation.Model.Implementation;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
-    public class VMStateList : INotifyPropertyChanged
+    internal class VMStateList : PropertyChange
     {
-        public ObservableCollection<StateModelData> Items { get; set; } = new();
-        private StateModelData _selectedItem;
-        public StateModelData SelectedItem
-        {
-            get => _selectedItem;
-            set { _selectedItem = value; OnPropertyChanged(nameof(SelectedItem)); }
-        }
+        private IModel _iModel;
 
-        public ICommand AddCommand { get; }
-        public ICommand DeleteCommand { get; }
-        public ICommand RefreshCommand { get; }
+        private ObservableCollection<VMState> _stateVM;
 
         public VMStateList()
         {
-            LoadMock();
-
-            AddCommand = new RelayCommand(_ => Items.Add(new StateModelData()));
-            DeleteCommand = new RelayCommand(_ => Items.Remove(SelectedItem), _ => SelectedItem != null);
-            RefreshCommand = new RelayCommand(_ => LoadMock());
+            _iModel = IModel.CreateNewModel();
+            _stateVM = new ObservableCollection<VMState>();
         }
 
-        private void LoadMock()
+        public VMStateList(IModel? model)
         {
-            Items.Clear();
-            Items.Add(new StateModelData { Id = 1, Status = "State Item 1" });
+            _iModel = model ?? IModel.CreateNewModel();
+            _stateVM = new ObservableCollection<VMState>();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public ObservableCollection<VMState> StateView
+        {
+            get => _stateVM;
+            set
+            {
+                _stateVM = value;
+                OnPropertyChanged(nameof(StateView));
+            }
+        }
+
+        public void GetStates()
+        {
+            StateView.Clear();
+
+            foreach (var state in _iModel.GetAllStates())
+            {
+                StateView.Add(StateToPresentation(state));
+            }
+
+            OnPropertyChanged(nameof(StateView));
+        }
+
+        private VMState StateToPresentation(IStateModelData state)
+        {
+            return new VMState(state.stateId, state.bookId, state.quantity);
+        }
     }
 }
