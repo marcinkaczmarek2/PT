@@ -1,5 +1,4 @@
 using Data.API;
-using Microsoft.Data.SqlClient;
 
 namespace Data.Test
 {
@@ -24,7 +23,6 @@ namespace Data.Test
         [TestInitialize]
         public void TestInitialize()
         {
-            // Za ka¿dym razem tworzymy nowe repozytorium z connection stringiem
             _repo = IDataRepository.CreateNewRepository(testConnectionString);
             _repo.ClearAll();
         }
