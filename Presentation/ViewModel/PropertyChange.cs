@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
-[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
     internal class PropertyChange : INotifyPropertyChanged

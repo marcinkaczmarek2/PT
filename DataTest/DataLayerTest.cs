@@ -1,6 +1,6 @@
 using Data.API;
 
-namespace Data.Test
+namespace DataTest
 {
     [TestClass]
     public class DataUnitTest

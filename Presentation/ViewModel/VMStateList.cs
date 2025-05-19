@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
     internal class VMStateList : PropertyChange

@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
     internal class VMState : PropertyChange

@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
     internal class ViewModelMain : PropertyChange

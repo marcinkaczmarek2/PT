@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
     internal class VMReader : PropertyChange

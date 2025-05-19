@@ -28,8 +28,6 @@ namespace Presentation.Model.API
 
         public abstract Task ReturnBook(int eventId, int userId, int bookId);
 
-        // ---------------------
-
         public static IModel CreateNewModel()
         {
             return new ModelDefault();

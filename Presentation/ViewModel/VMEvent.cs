@@ -1,7 +1,5 @@
-﻿using Presentation.Model.API;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Presentation.Test")]
 namespace Presentation.ViewModel
 {
     internal class VMEvent : PropertyChange
