@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="LibraryLINQDatabase" Class="LibraryLinqDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.BookDB" Member="BookDB">
+    <Type Name="BookDB">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="title" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="publisher" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="author" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="numberOfPages" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="genre" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Association Name="BookDB_EventDB" Member="EventDB" ThisKey="id" OtherKey="bookId" Type="EventDB" />
+      <Association Name="BookDB_StateDB" Member="StateDB" ThisKey="id" OtherKey="bookId" Type="StateDB" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EventDB" Member="EventDB">
+    <Type Name="EventDB">
+      <Column Name="eventId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="userId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="bookId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="BookDB_EventDB" Member="BookDB" ThisKey="bookId" OtherKey="id" Type="BookDB" IsForeignKey="true" />
+      <Association Name="ReaderDB_EventDB" Member="ReaderDB" ThisKey="userId" OtherKey="id" Type="ReaderDB" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ReaderDB" Member="ReaderDB">
+    <Type Name="ReaderDB">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="surname" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="email" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="phoneNumber" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="role" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="debt" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Association Name="ReaderDB_EventDB" Member="EventDB" ThisKey="id" OtherKey="userId" Type="EventDB" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StateDB" Member="StateDB">
+    <Type Name="StateDB">
+      <Column Name="bookId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="stateId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="quantity" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="BookDB_StateDB" Member="BookDB" ThisKey="bookId" OtherKey="id" Type="BookDB" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
