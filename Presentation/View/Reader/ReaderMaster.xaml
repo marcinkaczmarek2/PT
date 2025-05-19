@@ -1,0 +1,44 @@
+<UserControl x:Class="Presentation.View.Reader.ReaderMaster"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Presentation.ViewModel">
+    <UserControl.DataContext>
+        <vm:VMReaderList />
+    </UserControl.DataContext>
+
+    <Border Background="White" Padding="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Readers" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Lista czytelnikw -->
+                <ListBox ItemsSource="{Binding Readers}" SelectedItem="{Binding SelectedReader}" DisplayMemberPath="Name" 
+                         Margin="0,0,10,0" FontSize="16" />
+
+                <!-- Szczegy i edycja -->
+                <StackPanel Grid.Column="1" Margin="10" VerticalAlignment="Top">
+                    <Label Content="Name:" />
+                    <TextBox Text="{Binding SelectedReader.Name}" Margin="0,0,0,10"/>
+
+                    <Label Content="Email:" />
+                    <TextBox Text="{Binding SelectedReader.Email}" Margin="0,0,0,10"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Content="Add" Command="{Binding AddCommand}" Width="60" Margin="0,0,10,0"/>
+                        <Button Content="Remove" Command="{Binding RemoveCommand}" Width="80"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

@@ -42,13 +42,9 @@ namespace Data.Database
     partial void InsertStateDB(StateDB instance);
     partial void UpdateStateDB(StateDB instance);
     partial void DeleteStateDB(StateDB instance);
-        #endregion
-        public LibraryLinqDataContext()
-        {
-            OnCreated();
-        }
-
-        public LibraryLinqDataContext(string connection) : 
+    #endregion
+		
+		public LibraryLinqDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
