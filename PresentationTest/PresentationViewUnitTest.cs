@@ -65,8 +65,8 @@ namespace Presentation.Test
 
             Assert.AreEqual(1, list.StateView.Count);
             Assert.AreEqual(1, list.StateView[0].StateId);
-            Assert.AreEqual(10, list.StateView[0].Quantity);
-            Assert.AreEqual(1, list.StateView[0].BookId);
+            Assert.AreEqual(1, list.StateView[0].Quantity);
+            Assert.AreEqual(10, list.StateView[0].BookId);
 
             model.RemoveState(2);
             list.StateView.Remove(state);

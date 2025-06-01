@@ -32,6 +32,11 @@ namespace ServicesTest
             return Books;
         }
 
+        public override IEnumerable<IBook> GetAllBooks(string author)
+        {
+            return Books;
+        }
+
         // ----------- Reader -----------
 
         public override void AddReader(int id, string name, string surname, string email, string phoneNumber, string role, decimal debt)
@@ -50,6 +55,10 @@ namespace ServicesTest
             return Readers.FirstOrDefault(r => r.id == id);
         }
 
+        public override IEnumerable<IUser> GetAllReaders(string name)
+        {
+            return Readers;
+        }
         public override IEnumerable<IUser> GetAllReaders()
         {
             return Readers;
@@ -73,6 +82,10 @@ namespace ServicesTest
             return States.FirstOrDefault(s => s.stateId == id);
         }
 
+        public override IEnumerable<IState> GetAllStates(int bookId)
+        {
+            return States;
+        }
         public override IEnumerable<IState> GetAllStates()
         {
             return States;
@@ -91,6 +104,10 @@ namespace ServicesTest
             if (ev != null) Events.Remove(ev);
         }
 
+        public override IEnumerable<IEvent> GetAllEvents(int userId)
+        {
+            return Events;
+        }
         public override IEnumerable<IEvent> GetAllEvents()
         {
             return Events;
@@ -113,6 +130,11 @@ namespace ServicesTest
             Readers.Clear();
             States.Clear();
             Events.Clear();
+        }
+
+        public override void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

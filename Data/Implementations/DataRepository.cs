@@ -74,6 +74,15 @@ namespace Data.Implementations
             return books;
         }
 
+        public override IEnumerable<IBook> GetAllBooks(string author)
+        {
+            var books = from book in _context.BookDB
+                        where book.author == author
+                        select EntryToObj(book);
+            return books;
+        }
+
+
         // ------------------ Reader ------------------
 
         private IUser? EntryToObj(ReaderDB readerDB)
@@ -130,6 +139,15 @@ namespace Data.Implementations
             return readers;
         }
 
+        public override IEnumerable<IUser> GetAllReaders(string name)
+        {
+            var readers = from reader in _context.ReaderDB
+                          where reader.name == name
+                          select EntryToObj(reader);
+            return readers;
+        }
+
+
         // ------------------ State ------------------
 
         private IState? EntryToObj(StateDB stateDB)
@@ -180,6 +198,15 @@ namespace Data.Implementations
             return states;
         }
 
+        public override IEnumerable<IState> GetAllStates(int bookId)
+        {
+            var states = from state in _context.StateDB
+                         where state.bookId == bookId
+                         select EntryToObj(state);
+            return states;
+        }
+
+
         // ------------------ Event ------------------
 
         private IEvent? EntryToObj(EventDB eventDB)
@@ -220,6 +247,14 @@ namespace Data.Implementations
             return events;
         }
 
+        public override IEnumerable<IEvent> GetAllEvents(int userId)
+        {
+            var events = from ev in _context.EventDB
+                         where ev.userId == userId
+                         select EntryToObj(ev);
+            return events;
+        }
+
         // ------------------ Utility ------------------
 
         public override void ChangeQuantity(int stateId, int change)
@@ -236,5 +271,12 @@ namespace Data.Implementations
             _context.ExecuteCommand("DELETE FROM ReaderDB");
             _context.ExecuteCommand("DELETE FROM BookDB");
         }
+
+        public override void Dispose()
+        {
+            _context?.Dispose();
+        }
+
     }
+
 }

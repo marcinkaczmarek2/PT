@@ -1,4 +1,5 @@
 using Data.API;
+using Microsoft.Data.SqlClient;
 
 namespace DataTest
 {
@@ -25,6 +26,13 @@ namespace DataTest
         {
             _repo = IDataRepository.CreateNewRepository(testConnectionString);
             _repo.ClearAll();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _repo.Dispose();
+            SqlConnection.ClearAllPools();
         }
 
         [TestMethod]
