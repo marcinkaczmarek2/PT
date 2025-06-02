@@ -91,5 +91,15 @@ namespace Presentation.Test
             list.SelectedVM.Remove(ev);
             Assert.AreEqual(0, list.SelectedVM.Count);
         }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            if (model is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+
     }
 }

@@ -39,5 +39,15 @@ namespace Presentation.Test
             Assert.IsNotNull(model);
             model.RemoveEvent(10);
         }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            if (model is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+
     }
 }

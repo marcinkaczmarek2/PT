@@ -1,17 +1,26 @@
 ﻿using Presentation.Model.API;
 using Services.API;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Presentation.Model.Implementation
 {
-    internal class ModelDefault : IModel
+    internal class ModelDefault : IModel, IDisposable
     {
         private ILibraryService _service;
 
         internal ModelDefault(ILibraryService? service = null)
         {
             _service = service ?? ILibraryService.CreateNewService();
+        }
+
+        public void Dispose()
+        {
+            if (_service is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
 
         // ----------------- Book -----------------

@@ -3,13 +3,21 @@ using Services.API;
 
 namespace PresentationTest
 {
-    public class MockModel : IModel
+    public class MockModel : IModel, IDisposable
     {
         private ILibraryService service;
 
         internal MockModel(ILibraryService? _service = null)
         {
             service = _service ?? ILibraryService.CreateNewService();
+        }
+
+        public void Dispose()
+        {
+            if (service is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
 
         public override List<IBookModelData> GetAllBooks()

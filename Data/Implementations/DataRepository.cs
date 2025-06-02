@@ -274,6 +274,7 @@ namespace Data.Implementations
 
         public override void Dispose()
         {
+            Console.WriteLine("[DEBUG] Disposing DataRepository and closing DB connection.");
             _context?.Dispose();
         }
 
