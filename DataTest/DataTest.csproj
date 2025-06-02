@@ -8,12 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Database\LibraryLINQDatabaseTest.mdf" />
+    <None Remove="Database\LibraryLINQDatabaseTest_log.ldf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="MSTest" Version="3.6.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Database\LibraryLINQDatabaseTest.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Database\LibraryLINQDatabaseTest_log.ldf" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -32,9 +44,6 @@
 	<ItemGroup>
 		<None Update="Database\LibraryDatabaseTest.mdf">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Update="Database\LibraryLINQDatabaseTest.mdf">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	
