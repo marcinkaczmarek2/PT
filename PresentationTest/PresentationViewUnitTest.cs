@@ -97,6 +97,7 @@ namespace Presentation.Test
         {
             if (model is IDisposable disposable)
             {
+                Console.WriteLine("[DEBUG] Closing DB connection.");
                 disposable.Dispose();
             }
         }

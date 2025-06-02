@@ -45,6 +45,7 @@ namespace Presentation.Test
         {
             if (model is IDisposable disposable)
             {
+                Console.WriteLine("[DEBUG] Disposing DataRepository and closing DB connection.");
                 disposable.Dispose();
             }
         }
