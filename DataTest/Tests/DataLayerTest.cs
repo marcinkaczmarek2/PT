@@ -1,7 +1,7 @@
 using Data.API;
 using Microsoft.Data.SqlClient;
 
-namespace DataTest
+namespace DataTest.Tests
 {
     [TestClass]
     public class DataUnitTest

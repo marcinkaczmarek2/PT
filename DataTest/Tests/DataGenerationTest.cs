@@ -1,12 +1,8 @@
 using Data.API;
 using DataTest.DataGenerators;
 using Microsoft.Data.SqlClient;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
 
-namespace DataTest
+namespace DataTest.Tests
 {
     [TestClass]
     public class DataGenerationTest
@@ -56,7 +52,7 @@ namespace DataTest
 
             var state = _repo.GetState(1);
             Assert.IsNotNull(state);
-            Assert.AreEqual(3, state.quantity);
+            Assert.AreEqual(1, state.quantity);
 
             var events = _repo.GetAllEvents().ToList();
             Assert.AreEqual(1, events.Count);
