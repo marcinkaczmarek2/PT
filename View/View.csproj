@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModelViewModel\ModelViewModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="BookEntry.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="BookMaster.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="EventEntry.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="EventMaster.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ReaderEntry.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ReaderMaster.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="StateEntry.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="StateMaster.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="View.EventMaster"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View"
+             xmlns:vmodel="clr-namespace:ModelViewModel.ViewModel;assembly=ModelViewModel"
+             xmlns:view="clr-namespace:View"
+             mc:Ignorable="d" 
+             Height="500" Width="800">
+    <UserControl.DataContext>
+        <vmodel:VMEventList/>
+    </UserControl.DataContext>
+    <DockPanel Margin="20">
+        <TextBlock FontSize="24" DockPanel.Dock="Top" Margin="0,0,0,10">Events</TextBlock>
+        <Grid VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <GroupBox Header="Selected Event">
+                <view:EventEntry FontSize="12" DataContext="{Binding SelectedEvent}" Margin="0,0,9,0" />
+            </GroupBox>
+            <Button Margin="40,25,640,152" Command="{Binding SellCommand}" Height="Auto" Width="Auto">Sell</Button>
+            <Button Margin="40,69,640,108" Command="{Binding SupplyCommand}" Height="Auto" Width="Auto">Supply</Button>
+            <Button Margin="40,113,640,64" Command="{Binding ReturnCommand}" Height="Auto" Width="Auto">Return</Button>
+            <Button Margin="40,157,640,20" Command="{Binding DeleteCommand}" Height="Auto" Width="Auto">Delete</Button>
+            <Button Margin="660,176,20,10" Command="{Binding RefreshCommand}" Height="Auto" Width="Auto">Refresh</Button>
+            <GroupBox Grid.Row="1">
+                <ListView Grid.Row="1" HorizontalAlignment="Stretch" Margin="0,5" ItemsSource="{Binding EventList}" SelectedIndex="{Binding SelectedIndex}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Event Id" Width="180" DisplayMemberBinding="{Binding eventId}" />
+                            <GridViewColumn Header="User Id" Width="180" DisplayMemberBinding="{Binding userId}" />
+                            <GridViewColumn Header="Book Id" Width="180" DisplayMemberBinding="{Binding bookId}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+</UserControl>
