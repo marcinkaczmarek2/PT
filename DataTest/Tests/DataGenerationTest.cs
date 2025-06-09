@@ -46,7 +46,7 @@ namespace DataTest.Tests
 
             var book = _repo.GetBook(1);
             Assert.IsNotNull(book);
-            Assert.AreEqual("Wiedümin", book.title);
+            Assert.AreEqual("Witcher", book.title);
 
             var reader = _repo.GetReader(1);
             Assert.IsNotNull(reader);

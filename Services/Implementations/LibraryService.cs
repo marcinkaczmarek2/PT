@@ -3,7 +3,7 @@ using Services.API;
 using Services.Implementation;
 
 
-namespace Service.Implementation
+namespace Services.Implementation
 {
     internal class LibraryService : ILibraryService
     {

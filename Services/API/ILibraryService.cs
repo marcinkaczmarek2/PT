@@ -33,12 +33,12 @@ namespace Services.API
         // Factory methods
         public static ILibraryService CreateNewService(IDataRepository data)
         {
-            return new Service.Implementation.LibraryService(data);
+            return new Services.Implementation.LibraryService(data);
         }
 
         public static ILibraryService CreateNewService()
         {
-            return new Service.Implementation.LibraryService();
+            return new Services.Implementation.LibraryService();
         }
     }
 }
