@@ -5,6 +5,8 @@ using Microsoft.Data.SqlClient;
 namespace DataTest.Tests
 {
     [TestClass]
+    [DeploymentItem("Database\\LibraryLINQDatabaseTest.mdf")]
+    [DeploymentItem("Database\\LibraryLINQDatabaseTest_log.ldf")]
     public class DataGenerationTest
     {
         private static string testConnectionString;

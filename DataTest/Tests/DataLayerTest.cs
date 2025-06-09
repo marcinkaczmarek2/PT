@@ -4,6 +4,8 @@ using Microsoft.Data.SqlClient;
 namespace DataTest.Tests
 {
     [TestClass]
+    [DeploymentItem("Database\\LibraryLINQDatabaseTest.mdf")]
+    [DeploymentItem("Database\\LibraryLINQDatabaseTest_log.ldf")]
     public class DataUnitTest
     {
         private static string testConnectionString;
